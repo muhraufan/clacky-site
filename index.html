@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Clacky: a mechanical keyboard for your iPhone</title>
+<meta name="description" content="Clacky is a mechanical keyboard for your iPhone. Every key sinks, springs back and clacks. Join the TestFlight beta.">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root { --ink:#111; --quiet:#8d8d8a; --soft:#f4f4f2; --say:34px; }
+* { box-sizing:border-box; margin:0; }
+html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+body { font:400 17px/1.55 Inter,-apple-system,system-ui,sans-serif; color:var(--ink); background:#fff; -webkit-font-smoothing:antialiased; }
+a { color:inherit; }
+.col { width:min(640px, 100% - 40px); margin-inline:auto; }
+
+header { position:sticky; top:0; z-index:5; background:rgba(255,255,255,.86); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); }
+header .col { height:64px; display:flex; align-items:center; justify-content:space-between; }
+.brand { display:flex; align-items:center; gap:8px; font-weight:500; text-decoration:none; }
+.brand img { width:30px; height:30px; margin-left:-3px; }
+
+.pill { display:inline-flex; align-items:center; justify-content:center; border:0; border-radius:99px; background:var(--ink); color:#fff; font:inherit; text-decoration:none; cursor:pointer; transition:transform .12s ease, opacity .15s ease; white-space:nowrap; }
+.pill:active { transform:scale(.97); }
+.pill.small { height:36px; padding:0 16px; font-size:14px; }
+.pill.big { height:48px; padding:0 24px; }
+.pill.soft { background:var(--soft); color:var(--ink); }
+
+.say { font-size:var(--say); line-height:1.3; font-weight:500; letter-spacing:-.022em; color:var(--quiet); text-wrap:pretty; }
+.say b { color:var(--ink); font-weight:600; }
+.say + .say { margin-top:20px; }
+.say .avatar img { width:34px; height:34px; border-radius:50%; vertical-align:-6px; }
+
+.hero { padding:40px 0 64px; }
+.mark-line { display:flex; align-items:center; gap:10px; margin:0 0 28px -9px; }
+.mark { display:block; padding:0; border:0; background:none; cursor:pointer; touch-action:manipulation; -webkit-tap-highlight-color:transparent; border-radius:24px; }
+.mark img { display:block; width:96px; height:96px; filter:drop-shadow(0 8px 18px rgba(8,90,160,.2)); transition:transform .22s cubic-bezier(.3,2,.5,1), filter .15s ease; user-select:none; -webkit-user-drag:none; }
+@media (hover:hover) and (prefers-reduced-motion:no-preference) { .mark:hover img { transform:translateY(-3px) rotate(-4deg); } }
+.mark.down img, .mark.down:hover img { transform:translateY(4px) scale(.97); filter:drop-shadow(0 2px 4px rgba(8,90,160,.28)); transition:transform .035s ease-out, filter .035s ease-out; }
+.mark:focus-visible { outline:2px solid #2ba4f5; outline-offset:3px; }
+.mark-say { font-size:15px; color:var(--quiet); opacity:0; transition:opacity .2s ease; white-space:nowrap; }
+.mark-say.on { opacity:1; }
+.mark-say b { color:var(--ink); font-weight:500; }
+.when { margin-top:16px; font-size:20px; line-height:1.4; letter-spacing:-.01em; color:var(--quiet); }
+.actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:28px; }
+
+.play { width:min(992px, 100% - 32px); margin-inline:auto; background:var(--soft); border-radius:32px; padding:40px 24px 32px; overflow:hidden; scroll-margin-top:80px; }
+.typed { height:88px; display:flex; align-items:flex-end; justify-content:center; max-width:640px; margin:0 auto; font-size:var(--say); line-height:1.3; font-weight:500; letter-spacing:-.022em; overflow:hidden; white-space:nowrap; }
+.typed.empty { color:#b4b4b0; }
+.typed .text { overflow:hidden; text-overflow:ellipsis; direction:rtl; unicode-bidi:plaintext; }
+.typed .caret { width:2px; height:1.05em; margin-left:2px; margin-bottom:.14em; background:#2ba4f5; animation:blink 1.1s steps(2) infinite; flex:none; }
+@keyframes blink { 50% { opacity:0; } }
+
+.board-wrap { container-type:inline-size; width:min(640px, 100%); margin:44px auto 56px; perspective:1500px; }
+.board { --gap:.7cqw; padding:2.4cqw; border-radius:4.2cqw; background:var(--panel); display:flex; flex-direction:column; gap:var(--gap); transform:rotateX(16deg); box-shadow:inset 0 .25cqw 0 rgba(255,255,255,.35), 0 1.3cqw 0 var(--edge), 0 2.6cqw 3cqw rgba(0,0,0,.14), 0 7cqw 11cqw rgba(0,0,0,.09); touch-action:manipulation; user-select:none; -webkit-user-select:none; }
+.row { display:flex; gap:var(--gap); }
+.key { flex:var(--w,1) 1 0; min-width:0; height:12.4cqw; padding:0; border:0; background:none; cursor:pointer; color:inherit; font:inherit; -webkit-tap-highlight-color:transparent; touch-action:manipulation; outline:none; }
+.cap { position:relative; display:block; width:100%; height:100%; border-radius:1.9cqw; background:linear-gradient(var(--top) 0 14%, var(--mid) 55%, var(--bot) 90% 96.5%, var(--lip)); box-shadow:0 0 0 .08cqw var(--stroke), 0 .5cqw 0 var(--lip), 0 .9cqw 1.1cqw rgba(0,0,0,.24); transition:transform .15s cubic-bezier(.3,2,.5,1); }
+.cap::before { content:""; position:absolute; inset:13.5% 1.3cqw 14%; border-radius:1.9cqw; background:linear-gradient(var(--dt) 22%, var(--db)); }
+.cap b { position:absolute; inset:0 0 .25cqw; display:grid; place-items:center; font-weight:400; font-size:4.9cqw; line-height:1; color:var(--lg); }
+.cap b.small { font-size:3.3cqw; }
+.cap svg { width:4.8cqw; height:4.8cqw; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.key.down .cap { transform:translateY(.46cqw); box-shadow:0 0 0 .08cqw var(--stroke), 0 .06cqw 0 var(--lip), 0 .15cqw .3cqw rgba(0,0,0,.28); transition:transform .035s ease-out; }
+.key.on .cap b { color:#2ba4f5; }
+
+.designs { display:flex; justify-content:center; flex-wrap:wrap; gap:16px 12px; }
+.design { width:76px; padding:0; border:0; background:none; font:inherit; color:var(--quiet); cursor:pointer; -webkit-tap-highlight-color:transparent; }
+.chip { --u:56px; position:relative; display:block; width:var(--u); height:var(--u); margin:0 auto 10px; border-radius:13px; background:linear-gradient(var(--top) 0 14%, var(--mid) 55%, var(--bot) 90% 96%, var(--lip)); box-shadow:0 0 0 .5px var(--stroke), 0 3px 0 var(--lip), 0 6px 9px rgba(0,0,0,.2); transition:transform .15s cubic-bezier(.3,2,.5,1), box-shadow .12s ease; }
+.chip::before { content:""; position:absolute; inset:7px; border-radius:10px; background:linear-gradient(var(--dt) 22%, var(--db)); }
+.chip i { position:absolute; inset:0; margin:auto; width:15px; height:15px; border-radius:50%; background:var(--dot); }
+.design[aria-pressed="true"] .chip { transform:translateY(3px); box-shadow:0 0 0 .5px var(--stroke), 0 .5px 0 var(--lip), 0 1px 2px rgba(0,0,0,.25); }
+.design small { display:block; font-size:13px; line-height:1.3; transition:color .15s; }
+.design[aria-pressed="true"] small { color:var(--ink); font-weight:500; }
+.design:focus-visible, .pill:focus-visible, input:focus-visible, .link:focus-visible { outline:2px solid #2ba4f5; outline-offset:3px; border-radius:14px; }
+
+.about { display:flex; align-items:baseline; justify-content:center; flex-wrap:wrap; gap:4px 8px; margin-top:24px; min-height:26px; text-align:center; color:var(--quiet); font-size:15px; }
+.link { border:0; background:none; font:inherit; color:var(--ink); cursor:pointer; text-decoration:underline; text-underline-offset:3px; text-decoration-color:rgba(0,0,0,.25); padding:0; }
+
+section.text { padding:96px 0 0; }
+.join { display:flex; gap:8px; margin-top:28px; }
+.join input { flex:1; min-width:0; height:52px; -webkit-appearance:none; appearance:none; border:0; border-radius:26px; padding:0 20px; background:var(--soft); color:var(--ink); font:inherit; }
+.join input::placeholder { color:var(--quiet); }
+.join .pill { height:52px; font-weight:500; min-width:164px; }
+.join.done input { opacity:.5; }
+.note { margin-top:14px; min-height:24px; font-size:15px; color:var(--quiet); }
+.note.bad { color:#c8452f; }
+
+footer { padding:112px 0 48px; font-size:14px; color:var(--quiet); }
+footer .col { display:flex; justify-content:space-between; gap:12px 16px; flex-wrap:wrap; }
+footer nav { display:flex; gap:16px; flex-wrap:wrap; }
+.wide { width:min(992px, 100% - 40px); margin:48px auto 0; }
+.feat-label { margin:0 0 20px; font-size:15px; font-weight:600; }
+.feat { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:40px; margin:0; padding:0; list-style:none; }
+.feat + .feat-label { margin-top:56px; }
+.feat li { display:grid; gap:4px; align-content:start; }
+.feat-ic { display:grid; place-items:center; width:40px; height:40px; margin-bottom:10px; border-radius:11px; background:var(--soft); }
+.feat-ic svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.feat b { font-size:16px; font-weight:600; letter-spacing:-.01em; }
+.feat li > span:last-child { font-size:15px; line-height:1.5; color:var(--quiet); text-wrap:pretty; }
+.fine { margin-top:48px; font-size:15px; color:var(--quiet); }
+
+@media (max-width:640px) {
+  :root { --say:26px; }
+  .when { font-size:17px; }
+  .hero { padding:24px 0 48px; }
+  .mark-line { margin:0 0 22px -7px; } .mark img { width:80px; height:80px; }
+  .play { padding:24px 12px 24px; border-radius:24px; }
+  .typed { height:68px; }
+  .board-wrap { margin:32px auto 40px; }
+  .key { height:15cqw; }
+  .cap b { font-size:6cqw; } .cap b.small { font-size:4cqw; } .cap svg { width:5.6cqw; height:5.6cqw; }
+  .designs { display:grid; grid-template-columns:repeat(4,1fr); gap:16px 4px; } .design { width:auto; } .chip { --u:52px; }
+  .feat { grid-template-columns:1fr; gap:28px; }
+  section.text { padding-top:72px; }
+  .join { flex-direction:column; } .join input { flex:none; } .join .pill { width:100%; }
+}
+@media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } .typed .caret { animation:none; } }
+</style>
+</head>
+<body>
+<header><div class="col">
+  <a class="brand" href="#top"><img src="assets/clacky-mark.png" alt="" width="30" height="30">Clacky</a>
+  <a class="pill small" href="#join">Join the beta</a>
+</div></header>
+
+<main id="top">
+  <section class="hero col">
+    <div class="mark-line">
+      <button class="mark" id="mark" type="button" aria-label="Press the Clacky key"><img src="assets/clacky-mark.png" alt="" width="96" height="96" draggable="false"></button>
+      <span class="mark-say" id="markSay" aria-live="polite"></span>
+    </div>
+    <p class="say"><b>Clacky</b> is a mechanical keyboard for your iPhone. <b>Every key sinks, springs back and clacks.</b> Pick from eight designs, and <b>each one brings its own switch.</b></p>
+    <p class="when">The TestFlight beta opens in about 1–2 weeks, in English and 日本語.</p>
+    <div class="actions">
+      <a class="pill big" href="#join">Join the beta</a>
+      <a class="pill big soft" href="#play">Play with it</a>
+    </div>
+  </section>
+
+  <section class="play" id="play" aria-label="Try the keyboard">
+    <div class="typed empty" id="typed" aria-live="off"><span class="text" id="text">Go on, press a key</span><span class="caret"></span></div>
+    <div class="board-wrap"><div class="board" id="board" aria-label="Playable keyboard"></div></div>
+    <div class="designs" id="designs" role="group" aria-label="Keyboard design"></div>
+    <p class="about"><span id="tagline"></span> <button class="link" id="mute" type="button">Sound on</button></p>
+  </section>
+
+  <section class="text col">
+    <p class="say">It’s the part of a keyboard people fall for. <b>The little travel, the spring and the sound,</b> now under your thumbs, in the apps you already type in.</p>
+  </section>
+
+  <section aria-label="Why Clacky">
+    <div class="wide">
+      <p class="feat-label">The joy of it</p>
+      <ul class="feat">
+        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="3"/><path d="M8 5v3a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V5"/><path d="M12 13v3"/></svg></span><b>Keys that really move</b><span>Every key sinks under your thumb and springs back with a little overshoot, like the real thing.</span></li>
+        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg></span><b>A sound to get hooked on</b><span>Creamy, thocky or clicky. Keys on the left sound left, and keys on the right sound right.</span></li>
+        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3" width="8" height="18" rx="2"/><path d="M4 9v6"/><path d="M20 9v6"/></svg></span><b>Felt in your thumbs</b><span>A soft tap of haptics on each press, so typing stops feeling like tapping on glass.</span></li>
+        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg></span><b>Eight designs, eight switches</b><span>Each one looks and sounds different. Swipe the keys to change whenever your mood does.</span></li>
+        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5"/><path d="M12 12v9"/></svg></span><b>An unboxing, every time</b><span>Buying a keyboard is half the fun. Cut the tape, peel the film, and hear it type its own name.</span></li>
+        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="11" rx="2.5"/><path d="M7 11h.01M11 11h.01M15 11h.01M8 14.5h8"/></svg></span><b>A desk toy in your pocket</b><span>Lift any keyboard out of the list and press every key, just because it feels good.</span></li>
+      </ul>
+      <p class="feat-label">The essentials</p>
+      <ul class="feat">
+        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><b>Stays on your iPhone</b><span>What you type isn’t sent anywhere. The keyboard has no networking code, accounts, ads or analytics.</span></li>
+        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5 11 15l4.5-5.5"/></svg></span><b>Pay once</b><span>Two designs are free. The rest are $1.99 each, or $6.99 for all of them. No subscription.</span></li>
+        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.5"/></svg></span><b>Try before you buy</b><span>Test every design’s keys and sound in the app before you pay for anything.</span></li>
+        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h9M8.5 4v2c0 4-2 7-4.5 8.5M6 10c1 2 3 3.5 5.5 4.5"/><path d="m12.5 20 4-9 4 9M14 17h5"/></svg></span><b>English and 日本語</b><span>Romaji to kanji conversion runs on your iPhone, so it works offline too.</span></li>
+        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 13.8 9.2 19 11l-5.2 1.8L12 18l-1.8-5.2L5 11l5.2-1.8z"/><path d="M19 17v3M17.5 18.5h3"/></svg></span><b>Still a smart keyboard</b><span>Autocorrect, suggestions and an emoji panel, so you give up nothing to get the clack.</span></li>
+        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8 9h8M8 12.5h8M8 16h5"/></svg></span><b>In the apps you already use</b><span>Add it once and it’s there for your messages, notes and mail.</span></li>
+      </ul>
+      <p class="fine">Sound, haptics and paid designs need iOS’s Allow Full Access. Typing with the free designs works without it, and iOS uses its own keyboard for passwords. <a href="privacy/">How your privacy is protected</a>.</p>
+    </div>
+  </section>
+
+  <section class="text col" id="join" style="scroll-margin-top:64px">
+    <p class="say"><b>Want in early?</b> Leave your email and I’ll send your TestFlight invite when the beta opens, in about 1–2 weeks.</p>
+    <form class="join" id="joinf" novalidate>
+      <input type="email" name="email" placeholder="you@example.com" autocomplete="email" aria-label="Your email" required>
+      <button class="pill" type="submit">Join the beta</button>
+    </form>
+    <p class="note" id="note" aria-live="polite">Just your invite and a launch note. You’ll need an iPhone on iOS 17 or later. <a href="privacy/">Privacy policy</a>.</p>
+  </section>
+
+  <section class="text col">
+    <p class="say">Made in Tokyo by <span class="avatar"><img src="assets/raufan.jpg" alt="" width="34" height="34"></span> <b>Raufan,</b> a product designer who wanted a phone that feels a bit more like a desk.</p>
+  </section>
+</main>
+
+<footer><div class="col">
+  <span>Clacky · © 2026 Raufan Yusup</span>
+  <nav><a href="privacy/">Privacy</a><a href="terms/">Terms</a><a href="support/">Support</a><a href="https://muhraufan.com/">muhraufan.com</a></nav>
+</div></footer>
+
+<script>
+/* ---- Designs: the same palettes as the app ---- */
+const cap = (top, mid, bot, lip, stroke, dt, db, lg) => ({ top, mid, bot, lip, stroke, dt, db, lg });
+const milkCap = cap('#FFFEFF','#F2F2F2','#E7E7E7','#C8C8C8','#C4C4C4','#F1F1F1','#FDFDFD','#4F4F4F');
+const THEMES = {
+  milk: { name:'Milk', line:'Creamy, soft and rounded', panel:'#E4E7EB', edge:'#C9CDD3', alpha:milkCap, mod:milkCap,
+    accent:cap('#4AB4FE','#47B3FF','#2BA4F5','#0094F1','#0A8BE0','#32A9F4','#44B1FD','#F2FBFF') },
+  retro: { name:'Retro', line:'Clicky, crisp and a little loud', panel:'#D9D2C2', edge:'#BFB7A5',
+    alpha:cap('#F6F0E1','#E9E2D0','#DAD2BE','#B5AC96','#B0A791','#E5DECB','#F3EDDD','#45402F'),
+    mod:cap('#BDB5A3','#AEA693','#A09884','#7E7663','#7F7764','#A9A18E','#B9B19E','#2F2B20'),
+    accent:cap('#E9694A','#E05C3D','#CF4E30','#A93A20','#A63A21','#D95536','#E7674A','#FFF3E8') },
+  midnight: { name:'Midnight', line:'Thocky, deep and low', panel:'#17181C', edge:'#050506',
+    alpha:cap('#4A4D56','#363941','#2A2C33','#141519','#0E0F12','#2E3037','#3D4048','#E9E9ED'),
+    mod:cap('#3A3C44','#2A2C32','#212227','#0F1013','#0B0C0E','#24262B','#31333A','#A9ABB3'),
+    accent:cap('#FFB85C','#F6A63E','#E8932A','#B56A12','#A86212','#EE9C32','#FBB04E','#2B1B05') },
+  matcha: { name:'Matcha', line:'Poppy, bright and bouncy', panel:'#DCE3D3', edge:'#C0C9B5',
+    alpha:cap('#FBFDF7','#F0F3E9','#E3E8DA','#BFC8B1','#BAC3AC','#ECF0E4','#FAFCF5','#46523A'),
+    mod:cap('#C4D6A9','#B5C997','#A6BC87','#83996A','#84996B','#AFC391','#C1D3A6','#2F3C21'),
+    accent:cap('#6E9A4D','#5F8C40','#527D35','#3B6023','#3B5F24','#5A8739','#6C984B','#F5FBEC') },
+  blush: { name:'Blush', line:'Silky, soft and warm', panel:'#EADBD6', edge:'#CFBEB8',
+    alpha:cap('#FBF5EC','#F2E9DD','#E6DACC','#C9B9AB','#C4B3A5','#EFE5D8','#F9F2E9','#5A4149'),
+    mod:cap('#CFA3AD','#C2939E','#B5848F','#926570','#93666F','#BF8F9B','#CCA0AA','#3F2A32'),
+    accent:cap('#7A4A5C','#6C3F50','#5F3545','#44232F','#452430','#663A4B','#754759','#FBEFEA') },
+  neon: { name:'Neon', line:'Snappy, sharp and bright', panel:'#171330', edge:'#07051A',
+    alpha:cap('#3A3366','#2B2550','#211C40','#0F0C22','#0B0919','#26204A','#322B5C','#63F5D2'),
+    mod:cap('#6E4DF0','#5C3CDC','#4C2FC4','#2F1B8C','#2C1985','#5535D0','#6547E6','#F1EEFF'),
+    accent:cap('#FF6A9E','#FB4F8B','#EC3B78','#B01F52','#A81D4E','#F24482','#FF5E94','#2A0716') },
+  lunchbox: { name:'Lunchbox', line:'Bubbly, light and cheerful', panel:'#F4E7C5', edge:'#D8CBA8',
+    alpha:cap('#FFFDF6','#F8F4E8','#EEE8D8','#CFC8B4','#CAC3AF','#F4EFE2','#FDFAF1','#566A70'),
+    mod:cap('#B7E3D8','#A6D8CB','#95CCBE','#6FA99A','#70A99B','#A0D3C6','#B0DED2','#2F5249'),
+    accent:cap('#F8A18D','#F4907A','#EA7F68','#BE5A45','#B85843','#EF8A73','#F79A85','#4A1C11') },
+  ronin: { name:'Ronin', line:'Heavy, dark and deliberate', panel:'#12141C', edge:'#04050A',
+    alpha:cap('#34405F','#26314D','#1D263E','#0D1220','#0A0E19','#212B46','#2C3755','#EADCB2'),
+    mod:cap('#3A3A40','#2C2C31','#222226','#101012','#0C0C0E','#28282D','#333338','#BDB291'),
+    accent:cap('#D9533F','#C84632','#B63A28','#83261A','#7D2418','#BF3F2D','#D14C39','#FFF1DE') },
+};
+const setCap = (el, c) => { for (const k in c) el.style.setProperty('--' + k, c[k]); };
+
+/* ---- Sound: the app's switch recipes, rendered with Web Audio ---- */
+const m = (f, d, g) => [f, d, g];
+const SWITCHES = {
+  milk: { modes:[m(290,.016,.8),m(540,.013,1),m(980,.009,.75),m(1650,.006,.42),m(2700,.0035,.22),m(4200,.002,.1)], tone:5200, contact:.05, click:0, spring:0, room:.2, travel:.0075 },
+  midnight: { modes:[m(170,.02,.55),m(290,.017,.95),m(460,.013,.9),m(820,.008,.62),m(1450,.0045,.32),m(2500,.0025,.12)], tone:3400, contact:.04, click:0, spring:0, room:.28, travel:.009 },
+  retro: { modes:[m(420,.01,.5),m(830,.008,.62),m(1500,.006,.62),m(2600,.0045,.5),m(4100,.003,.36),m(6000,.002,.2)], tone:9500, contact:.05, click:.8, spring:.016, room:.16, travel:.0105 },
+  blush: { modes:[m(330,.015,.75),m(610,.012,1),m(1090,.008,.62),m(1800,.005,.3),m(2900,.003,.14),m(4400,.0018,.06)], tone:4400, contact:.035, click:0, spring:0, room:.24, travel:.0085 },
+  neon: { modes:[m(560,.008,.55),m(1050,.007,.85),m(1800,.0055,.8),m(3000,.004,.55),m(4700,.0026,.34),m(6600,.0016,.18)], tone:10000, contact:.06, click:.28, spring:.006, room:.12, travel:.0055 },
+  lunchbox: { modes:[m(610,.013,.8),m(1040,.011,1),m(1680,.007,.62),m(2500,.0042,.3),m(3800,.0026,.14),m(5600,.0016,.06)], tone:6400, contact:.04, click:0, spring:0, room:.22, travel:.006 },
+  ronin: { modes:[m(150,.022,.5),m(245,.02,1),m(410,.015,.86),m(720,.009,.5),m(1280,.005,.24),m(2200,.0028,.09)], tone:3000, contact:.045, click:0, spring:0, room:.32, travel:.0105 },
+  matcha: { modes:[m(480,.011,.7),m(860,.01,1),m(1420,.007,.82),m(2300,.0045,.46),m(3600,.0028,.22),m(5400,.0018,.1)], tone:7200, contact:.05, click:0, spring:.004, room:.18, travel:.0065 },
+};
+const SR = 44100;
+function renderSound(p, kind, seed) {
+  let s = seed * 2654435761 >>> 0 || 1;
+  const rnd = (lo, hi) => { s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return lo + ((t ^ t >>> 14) >>> 0) / 4294967296 * (hi - lo); };
+  const out = new Float64Array(Math.floor(SR * .15));
+  const strike = (time, modes, scale, decay, level) => {
+    const start = Math.floor(time * SR), bl = Math.floor(.0011 * SR);
+    const burst = Array.from({ length: bl }, (_, i) => rnd(-1, 1) * Math.exp(-i / (.00035 * SR)));
+    for (const [f0, d, g] of modes) {
+      const f = f0 * scale * rnd(.97, 1.03); if (f >= SR * .45) continue;
+      const gain = g * rnd(.85, 1.15) * level, w = 2 * Math.PI * f / SR, r = Math.exp(-1 / (d * decay * SR));
+      const a1 = 2 * r * Math.cos(w), a2 = -r * r, input = Math.sin(w) * gain;
+      let y1 = 0, y2 = 0;
+      for (let i = start; i < out.length; i++) { const o = i - start; const y = (o < bl ? burst[o] * input : 0) + a1 * y1 + a2 * y2; y2 = y1; y1 = y; out[i] += y; }
+    }
+  };
+  const contact = lvl => { let prev = 0; for (let i = 0; i < .006 * SR; i++) { const w = rnd(-1, 1); out[i] += (w - prev) * lvl * 2 * Math.exp(-i / (.0012 * SR)); prev = w; } };
+  const spring = (time, lvl) => { if (!lvl) return; const st = Math.floor(time * SR), f = 5100 * rnd(.96, 1.04); for (let i = st; i < out.length; i++) { const t = (i - st) / SR; out[i] += Math.sin(2 * Math.PI * f * t) * Math.exp(-t / .024) * lvl * 4; } };
+  const bottom = p.travel * rnd(.88, 1.12);
+  if (kind === 'down') {
+    contact(p.contact);
+    if (p.click) strike(bottom * .45, [m(3100,.0014,1),m(4700,.001,.8),m(6400,.0008,.45)], 1, 1, p.click);
+    strike(bottom, p.modes, 1, 1, 1); spring(bottom, p.spring);
+  } else if (kind === 'up') {
+    strike(.001, p.modes, 1.34, .62, 1); spring(.001, p.spring * 1.4);
+  } else if (kind === 'space') {
+    contact(p.contact); strike(bottom, p.modes, .84, 1.3, 1);
+    const wire = [m(1900,.003,1),m(3100,.002,.7)];
+    strike(bottom + .009, wire, 1, 1, .11); strike(bottom + .018, wire, 1.08, 1, .06);
+  } else {
+    contact(p.contact); strike(bottom, p.modes, .88, 1.16, 1);
+  }
+  const lc = 1 - Math.exp(-2 * Math.PI * p.tone / SR), dc = 1 - Math.exp(-2 * Math.PI * 70 / SR);
+  let low = 0, dcv = 0;
+  for (let i = 0; i < out.length; i++) { low += lc * (out[i] - low); dcv += dc * (low - dcv); out[i] = low - dcv; }
+  const dry = out.slice();
+  for (const [delay, g] of [[.0031,.6],[.0053,-.42],[.0087,.34],[.0131,-.24],[.0197,.16],[.0283,.1]]) {
+    const o = Math.floor(delay * SR); for (let i = o; i < out.length; i++) out[i] += dry[i - o] * g * p.room * 2;
+  }
+  const target = { down:.72, up:.24, space:.8, mod:.66 }[kind];
+  let peak = 1e-4; for (const v of out) peak = Math.max(peak, Math.abs(v));
+  const res = new Float32Array(out.length), last = out.length - 1;
+  for (let i = 0; i < out.length; i++) res[i] = Math.tanh(out[i] / peak * target * 1.15) * Math.min(1, (last - i) / (SR * .012));
+  return res;
+}
+let audio, muted = false, variant = 0;
+const banks = {};
+function bank(id) {
+  if (banks[id] || !audio) return banks[id];
+  const buf = d => { const b = audio.createBuffer(1, d.length, SR); b.copyToChannel(d, 0); return b; };
+  const p = SWITCHES[id];
+  return banks[id] = { down:[1,2,3,4,5,6].map(i => buf(renderSound(p, 'down', i))), up:buf(renderSound(p, 'up', 21)), space:buf(renderSound(p, 'space', 31)), mod:buf(renderSound(p, 'mod', 41)) };
+}
+function wake() { if (!audio) { const C = window.AudioContext || window.webkitAudioContext; if (C) audio = new C(); } if (audio && audio.state === 'suspended') audio.resume(); }
+function sound(kind, pan = 0, id = theme) {
+  if (muted || !audio) return;
+  const b = bank(id), src = audio.createBufferSource();
+  if (kind === 'down') { variant = (variant + 1) % b.down.length; src.buffer = b.down[variant]; } else src.buffer = b[kind];
+  const out = audio.createStereoPanner ? audio.createStereoPanner() : null;
+  if (out) { out.pan.value = pan; src.connect(out).connect(audio.destination); } else src.connect(audio.destination);
+  src.start();
+}
+
+/* ---- Keyboard ---- */
+const ICON = {
+  shift:'<svg viewBox="0 0 24 24"><path d="M12 4 3.5 13H8v7h8v-7h4.500z"/></svg>',
+  caps:'<svg viewBox="0 0 24 24"><path d="M12 4 3.500 13H8v7h8v-7h4.500z" fill="currentColor"/></svg>',
+  del:'<svg viewBox="0 0 24 24"><path d="M9 5h11a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H9l-6-7zM12 9.500l5 5M17 9.500l-5 5"/></svg>',
+  ret:'<svg viewBox="0 0 24 24"><path d="M19 6v5a2 2 0 0 1-2 2H5M9 9l-4 4 4 4"/></svg>',
+  face:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14.500c1 1.500 2.400 2.200 4 2.200s3-.7 4-2.200M9 9.500v.01M15 9.500v.01"/></svg>',
+};
+const LETTERS = ['qwertyuiop','asdfghjkl','zxcvbnm'], NUMBERS = ['1234567890','-/:;()$&@"','.,?!\''];
+const FACES = ['😀','😎','🥹','🤌','🔥','🫶','✨','🎹'];
+const $ = id => document.getElementById(id);
+const board = $('board'), typedEl = $('typed'), textEl = $('text');
+let theme = 'milk', shift = true, numbers = false, typed = '';
+const motion = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const spec = (id, label, kind, w) => ({ id, label, kind, w });
+function layout() {
+  const r = numbers ? NUMBERS : LETTERS, rows = [];
+  const chars = s => [...s].map(c => spec(c, c, 'alpha', 1));
+  rows.push(chars(r[0]));
+  rows.push(numbers ? chars(r[1]) : [spec('a','a','alpha',1.5), ...chars(r[1].slice(1,-1)), spec('l','l','alpha',1.5)]);
+  rows.push([numbers ? spec('', '', 'mod', 1.5) : spec('shift', ICON.shift, 'mod', 1.5), ...chars(r[2]), spec('del', ICON.del, 'mod', 1.5)]);
+  rows.push([spec('mode', numbers ? 'ABC' : '123', 'mod', 1.5), spec('face', ICON.face, 'mod', 1.2), spec(' ', '', 'alpha', 5.2), spec('ret', ICON.ret, 'accent', 2.1)]);
+  return rows;
+}
+const keyEls = new Map();
+function build() {
+  board.textContent = ''; keyEls.clear();
+  for (const row of layout()) {
+    const rowEl = document.createElement('div'); rowEl.className = 'row';
+    for (const k of row) {
+      const b = document.createElement('button');
+      b.className = 'key'; b.type = 'button'; b.tabIndex = -1; b.style.setProperty('--w', k.w); b.dataset.id = k.id;
+      b.setAttribute('aria-label', { ' ':'space', del:'delete', ret:'return', shift:'shift', face:'emoji', mode:'switch layout' }[k.id] || k.id);
+      const small = k.id === 'mode' ? ' class="small"' : '';
+      b.innerHTML = `<span class="cap"><b${small}>${k.label}</b></span>`;
+      b._kind = k.kind; setCap(b, THEMES[theme][k.kind]);
+      rowEl.append(b); if (k.id) keyEls.set(k.id, b);
+    }
+    board.append(rowEl);
+  }
+  paintShift();
+}
+function paintShift() {
+  if (numbers) return;
+  for (const [id, el] of keyEls) if (id.length === 1 && id !== ' ') el.querySelector('b').textContent = shift ? id.toUpperCase() : id;
+  const s = keyEls.get('shift'); if (s) s.querySelector('b').innerHTML = shift ? ICON.caps : ICON.shift;
+}
+function show() {
+  const empty = !typed;
+  typedEl.classList.toggle('empty', empty);
+  textEl.textContent = empty ? 'Go on, press a key' : '‎' + typed;
+}
+function act(id) {
+  if (id === 'shift') { shift = !shift; paintShift(); return; }
+  if (id === 'mode') { numbers = !numbers; build(); return; }
+  if (id === 'del') typed = [...typed].slice(0, -1).join('');
+  else if (id === 'ret') typed = '';
+  else if (id === 'face') typed += FACES[Math.floor(Math.random() * FACES.length)];
+  else if (id === ' ') typed += ' ';
+  else if (id) { typed += shift && !numbers ? id.toUpperCase() : id; if (shift) { shift = false; paintShift(); } }
+  if (!typed && !numbers && !shift) { shift = true; paintShift(); }
+  show();
+}
+const panOf = el => { const r = el.getBoundingClientRect(), b = board.getBoundingClientRect(); return ((r.left + r.width / 2 - b.left) / b.width - .5) * .7; };
+const kindOf = id => id === ' ' ? 'space' : ['shift','del','ret','mode','face'].includes(id) ? 'mod' : 'down';
+function press(el) {
+  if (el.classList.contains('down')) return;
+  const id = el.dataset.id;
+  el.classList.add('down'); wake();
+  sound(id ? kindOf(id) : 'mod', panOf(el));
+  if (id) act(id);
+}
+function lift(el) { if (!el) return; el.classList.remove('down'); sound('up', el.isConnected ? panOf(el) : 0); }
+
+const pointers = new Map();
+board.addEventListener('pointerdown', e => {
+  const el = e.target.closest('.key'); if (!el) return;
+  wake(); e.preventDefault(); pointers.set(e.pointerId, el); press(el);
+});
+const endPointer = e => { const el = pointers.get(e.pointerId); if (el) { pointers.delete(e.pointerId); lift(el); } };
+addEventListener('pointerup', endPointer); addEventListener('pointercancel', endPointer);
+
+/* Your own keyboard works too, but never while typing an email. */
+const physical = new Map();
+const idFor = e => { if (e.metaKey || e.ctrlKey || e.altKey) return null; if (e.key === 'Backspace') return 'del'; if (e.key === 'Enter') return 'ret'; if (e.key === ' ') return ' '; if (e.key === 'Shift') return 'shift'; const k = e.key.toLowerCase(); return k.length === 1 ? k : null; };
+addEventListener('keydown', e => {
+  const t = e.target;
+  if (t instanceof Element) {
+    if (t.matches('input,textarea')) return;
+    if (t.matches('a,button') && (e.key === 'Enter' || e.key === ' ')) return;
+  }
+  const id = idFor(e); if (!id) return;
+  if (e.repeat) { if (id !== 'shift') e.preventDefault(); return; }
+  e.preventDefault(); wake();
+  const el = keyEls.get(id);
+  if (el) { physical.set(e.code, el); press(el); return; }
+  // A character on the layer that isn't showing still types; it just has no cap to press.
+  if (id.length === 1) { typed += id; show(); sound('down'); }
+});
+addEventListener('keyup', e => { const el = physical.get(e.code); if (el) { physical.delete(e.code); lift(el); } });
+addEventListener('blur', () => { for (const el of physical.values()) el.classList.remove('down'); physical.clear(); });
+
+/* ---- Picking a design: a wave rolls across the caps ---- */
+const designs = $('designs'), tagline = $('tagline');
+function setBoard(t) { board.style.setProperty('--panel', t.panel); board.style.setProperty('--edge', t.edge); }
+function pick(id, animate = true) {
+  if (id === theme && animate) return;
+  theme = id; const t = THEMES[id];
+  tagline.textContent = t.line + '.';
+  [...designs.children].forEach(b => b.setAttribute('aria-pressed', b.dataset.id === id));
+  setBoard(t);
+  const b = board.getBoundingClientRect();
+  for (const el of board.querySelectorAll('.key')) {
+    const c = t[el._kind];
+    if (!animate || !motion) { setCap(el, c); continue; }
+    const r = el.getBoundingClientRect(), delay = (r.left - b.left) / b.width * 320 + (r.top - b.top) / b.height * 60;
+    setTimeout(() => { el.classList.add('down'); setTimeout(() => { setCap(el, c); el.classList.remove('down'); }, 55); }, delay);
+  }
+  if (animate) { wake(); [0, 70, 150, 215].forEach((d, i) => setTimeout(() => sound(i === 3 ? 'space' : 'down', i * .2 - .3, id), d)); }
+}
+for (const [id, t] of Object.entries(THEMES)) {
+  const b = document.createElement('button');
+  b.className = 'design'; b.type = 'button'; b.dataset.id = id; b.setAttribute('aria-pressed', 'false');
+  b.innerHTML = `<span class="chip"><i></i></span><small>${t.name}</small>`;
+  const chip = b.firstChild; setCap(chip, t.alpha); chip.style.setProperty('--dot', t.accent.mid);
+  b.addEventListener('click', () => pick(id));
+  designs.append(b);
+}
+$('mute').addEventListener('click', e => { muted = !muted; e.target.textContent = muted ? 'Sound off' : 'Sound on'; if (!muted) { wake(); sound('down'); } });
+
+/* ---- The logo is a key: each press tries the next switch ---- */
+const SWITCH_NAMES = { milk:'Creamy', retro:'Clicky', midnight:'Thock', matcha:'Poppy', blush:'Silky', neon:'Snappy', lunchbox:'Bubbly', ronin:'Heavy' };
+const mark = $('mark'), markSay = $('markSay');
+let markNext = 1, markTimer;
+function markPress() {
+  const id = Object.keys(THEMES)[markNext % 8];
+  markNext++;
+  wake(); sound('down', 0, id);
+  pick(id, false);
+  markSay.innerHTML = `<b>${SWITCH_NAMES[id]}</b> · ${THEMES[id].name}`;
+  markSay.classList.add('on');
+  clearTimeout(markTimer); markTimer = setTimeout(() => markSay.classList.remove('on'), 1800);
+}
+mark.addEventListener('pointerdown', () => { mark.classList.add('down'); markPress(); });
+for (const type of ['pointerup', 'pointerleave', 'pointercancel']) mark.addEventListener(type, () => {
+  if (mark.classList.contains('down')) sound('up');
+  mark.classList.remove('down');
+});
+// Keyboard presses arrive as a click with no pointer behind them.
+mark.addEventListener('click', e => {
+  if (e.detail) return;
+  mark.classList.add('down'); markPress(); setTimeout(() => mark.classList.remove('down'), 90);
+});
+
+/* ---- Beta sign-up ---- */
+// The Google Apps Script address goes here. While it's empty, sign-ups go to the local preview server.
+const SIGNUP = 'https://script.google.com/macros/s/AKfycbyTZcis67TicgizM4O3HHSgeKjOS6rMe8dYuOfE8HUqhMwMioNB3xu0KHAabbQG5e6c0Q/exec';
+const form = $('joinf'), note = $('note');
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  const input = form.email, btn = form.querySelector('button'), email = input.value.trim();
+  note.classList.remove('bad');
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { note.classList.add('bad'); note.textContent = 'That email doesn’t look right.'; input.focus(); return; }
+  btn.disabled = true; btn.style.opacity = .6;
+  try {
+    const res = await fetch(SIGNUP || '/api/waitlist', { method:'POST', body:JSON.stringify({ form:'clacky-beta', email, source:location.hostname }) });
+    if (!res.ok || !(await res.json()).ok) throw new Error(res.status);
+    form.classList.add('done'); input.disabled = true; btn.textContent = 'You’re in'; btn.style.opacity = 1;
+    note.textContent = 'Thanks. I’ll send your invite when the beta opens.';
+    wake(); ['down','down','space'].forEach((k, i) => setTimeout(() => sound(k), i * 85));
+  } catch {
+    btn.disabled = false; btn.style.opacity = 1; note.classList.add('bad'); note.textContent = 'That didn’t go through. Please try again.';
+  }
+});
+
+setBoard(THEMES.milk); build(); pick('milk', false);
+</script>
+</body>
+</html>
