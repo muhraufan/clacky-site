@@ -8,7 +8,8 @@ header { position:sticky; top:0; background:rgba(255,255,255,.86); backdrop-filt
 header .col { height:64px; display:flex; align-items:center; justify-content:space-between; }
 .brand { display:flex; align-items:center; gap:8px; font-weight:500; text-decoration:none; }
 .brand img { width:30px; height:30px; margin-left:-3px; }
-.pill { display:inline-flex; align-items:center; height:36px; padding:0 16px; border-radius:99px; background:var(--ink); color:#fff; font-size:14px; text-decoration:none; white-space:nowrap; }
+.pill { position:relative; isolation:isolate; display:inline-flex; align-items:center; height:36px; padding:0 16px; border:1px solid #1d5baf; border-radius:99px; background:linear-gradient(#3e8ae6, #1f6ed6 52%, #7fc6ff); color:#0b1a2e; font-size:14px; font-weight:500; text-decoration:none; white-space:nowrap; box-shadow:0 2px 6px rgba(20,60,120,.22); }
+.pill::before { content:""; position:absolute; z-index:-1; left:8%; right:8%; top:1px; height:46%; border-radius:99px; background:linear-gradient(rgba(255,255,255,.95), rgba(255,255,255,.2)); }
 main { padding:40px 0 0; }
 h1 { font-size:34px; line-height:1.25; font-weight:600; letter-spacing:-.022em; }
 .updated { margin-top:10px; color:var(--quiet); font-size:15px; }

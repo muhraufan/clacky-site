@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Clacky: a mechanical keyboard for your iPhone</title>
-<meta name="description" content="Clacky is a mechanical keyboard for your iPhone. Every key sinks, springs back and clacks. Join the TestFlight beta.">
+<title>Clacky: buttons from 1984 to 2020, as your iPhone keyboard</title>
+<meta name="description" content="Clacky turns your iPhone keyboard into computer buttons from 1984 to 2020, each with the sound of a real keyboard from its time. Join the TestFlight beta.">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Pixelify+Sans:wght@600&display=swap" rel="stylesheet">
 <style>
 :root { --ink:#111; --quiet:#8d8d8a; --soft:#f4f4f2; --say:34px; }
 * { box-sizing:border-box; margin:0; }
@@ -23,11 +23,14 @@ header .col { height:64px; display:flex; align-items:center; justify-content:spa
 .brand { display:flex; align-items:center; gap:8px; font-weight:500; text-decoration:none; }
 .brand img { width:30px; height:30px; margin-left:-3px; }
 
-.pill { display:inline-flex; align-items:center; justify-content:center; border:0; border-radius:99px; background:var(--ink); color:#fff; font:inherit; text-decoration:none; cursor:pointer; transition:transform .12s ease, opacity .15s ease; white-space:nowrap; }
-.pill:active { transform:scale(.97); }
+/* The main buttons are 2002 gel, the same as the app's. */
+.pill { position:relative; isolation:isolate; display:inline-flex; align-items:center; justify-content:center; border:1px solid #1d5baf; border-radius:99px; background:linear-gradient(#3e8ae6, #1f6ed6 52%, #7fc6ff); color:#0b1a2e; font:inherit; font-weight:500; text-decoration:none; cursor:pointer; transition:transform .12s ease, opacity .15s ease; white-space:nowrap; box-shadow:0 2px 6px rgba(20,60,120,.22); }
+.pill::before { content:""; position:absolute; z-index:-1; left:8%; right:8%; top:1px; height:46%; border-radius:99px; background:linear-gradient(rgba(255,255,255,.95), rgba(255,255,255,.2)); }
+.pill:active { transform:translateY(1px); background:linear-gradient(#2c6fc4, #14509f 52%, #5aa8ee); }
 .pill.small { height:36px; padding:0 16px; font-size:14px; }
 .pill.big { height:48px; padding:0 24px; }
-.pill.soft { background:var(--soft); color:var(--ink); }
+.pill.soft { background:var(--soft); color:var(--ink); border-color:transparent; box-shadow:none; }
+.pill.soft::before { display:none; }
 
 .say { font-size:var(--say); line-height:1.3; font-weight:500; letter-spacing:-.022em; color:var(--quiet); text-wrap:pretty; }
 .say b { color:var(--ink); font-weight:600; }
@@ -54,24 +57,78 @@ header .col { height:64px; display:flex; align-items:center; justify-content:spa
 .typed .caret { width:2px; height:1.05em; margin-left:2px; margin-bottom:.14em; background:#2ba4f5; animation:blink 1.1s steps(2) infinite; flex:none; }
 @keyframes blink { 50% { opacity:0; } }
 
-.board-wrap { container-type:inline-size; width:min(640px, 100%); margin:44px auto 56px; perspective:1500px; }
-.board { --gap:.7cqw; padding:2.4cqw; border-radius:4.2cqw; background:var(--panel); display:flex; flex-direction:column; gap:var(--gap); transform:rotateX(16deg); box-shadow:inset 0 .25cqw 0 rgba(255,255,255,.35), 0 1.3cqw 0 var(--edge), 0 2.6cqw 3cqw rgba(0,0,0,.14), 0 7cqw 11cqw rgba(0,0,0,.09); touch-action:manipulation; user-select:none; -webkit-user-select:none; }
+.board-wrap { container-type:inline-size; width:min(640px, 100%); margin:44px auto 56px; }
+/* Each era's buttons, drawn the same way as the app draws them. */
+.board { --gap:.9cqw; padding:2.4cqw; border-radius:4.2cqw; display:flex; flex-direction:column; gap:var(--gap); box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 2cqw 5cqw rgba(0,0,0,.08); touch-action:manipulation; user-select:none; -webkit-user-select:none; transition:background .3s ease; }
 .row { display:flex; gap:var(--gap); }
 .key { flex:var(--w,1) 1 0; min-width:0; height:12.4cqw; padding:0; border:0; background:none; cursor:pointer; color:inherit; font:inherit; -webkit-tap-highlight-color:transparent; touch-action:manipulation; outline:none; }
-.cap { position:relative; display:block; width:100%; height:100%; border-radius:1.9cqw; background:linear-gradient(var(--top) 0 14%, var(--mid) 55%, var(--bot) 90% 96.5%, var(--lip)); box-shadow:0 0 0 .08cqw var(--stroke), 0 .5cqw 0 var(--lip), 0 .9cqw 1.1cqw rgba(0,0,0,.24); transition:transform .15s cubic-bezier(.3,2,.5,1); }
-.cap::before { content:""; position:absolute; inset:13.5% 1.3cqw 14%; border-radius:1.9cqw; background:linear-gradient(var(--dt) 22%, var(--db)); }
-.cap b { position:absolute; inset:0 0 .25cqw; display:grid; place-items:center; font-weight:400; font-size:4.9cqw; line-height:1; color:var(--lg); }
+.cap { position:relative; isolation:isolate; display:block; width:100%; height:100%; color:#1a1a1a; }
+.cap b { position:absolute; z-index:3; inset:0; display:grid; place-items:center; font-weight:400; font-size:4.9cqw; line-height:1; }
 .cap b.small { font-size:3.3cqw; }
 .cap svg { width:4.8cqw; height:4.8cqw; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
-.key.down .cap { transform:translateY(.46cqw); box-shadow:0 0 0 .08cqw var(--stroke), 0 .06cqw 0 var(--lip), 0 .15cqw .3cqw rgba(0,0,0,.28); transition:transform .035s ease-out; }
-.key.on .cap b { color:#2ba4f5; }
+.down .cap { transition:none; }
 
-.designs { display:flex; justify-content:center; flex-wrap:wrap; gap:16px 12px; }
+/* 1984: one-bit pixels. Pressed buttons invert. */
+[data-era="84"] .board { background:#fff radial-gradient(rgba(0,0,0,.17) .55px, transparent .7px) 0 0 / 3px 3px; }
+[data-era="84"] .cap { background:#fff; border:.32cqw solid #000; border-radius:.9cqw; box-shadow:.32cqw .32cqw 0 #000; color:#000; }
+[data-era="84"] .cap b { font-family:"Pixelify Sans", monospace; font-weight:600; }
+[data-era="84"] .cap svg { stroke-width:2.6; stroke-linecap:square; stroke-linejoin:miter; }
+[data-era="84"] .accent .cap { box-shadow:inset 0 0 0 .32cqw #fff, inset 0 0 0 .64cqw #000, .32cqw .32cqw 0 #000; }
+[data-era="84"] .down .cap { background:#000; color:#fff; }
+
+/* 1997: platinum grey with a two-step bevel. Pressed buttons darken and the bevel flips. */
+[data-era="97"] .board { background:#ddd; }
+[data-era="97"] .cap { background:#ddd; border:.22cqw solid #262626; border-radius:.5cqw; box-shadow:inset .26cqw .26cqw #fff, inset -.26cqw -.26cqw #888, inset .52cqw .52cqw #eee, inset -.52cqw -.52cqw #aaa; color:#000; }
+[data-era="97"] .cap b { font-weight:600; }
+[data-era="97"] .cap svg { stroke-width:2.3; }
+[data-era="97"] .mod .cap { background:#c9c9c9; }
+[data-era="97"] .accent .cap { box-shadow:inset .26cqw .26cqw #fff, inset -.26cqw -.26cqw #888, inset .52cqw .52cqw #eee, inset -.52cqw -.52cqw #aaa, 0 0 0 .45cqw #a8a8a8, 0 0 0 .67cqw #262626; }
+[data-era="97"] .down .cap { background:#6a6a6a; color:#fff; box-shadow:inset .26cqw .26cqw #444, inset -.26cqw -.26cqw #8e8e8e, inset .52cqw .52cqw #555, inset -.52cqw -.52cqw #7c7c7c; }
+
+/* 2002: glossy gel. The return key breathes like a default button. */
+[data-era="02"] .board { background:repeating-linear-gradient(#f4f4f4 0 1px, #e8e8e8 1px 2px); }
+[data-era="02"] .cap { border-radius:4.2cqw; border:.15cqw solid #9a9a9a; background:linear-gradient(#eaeaea, #d2d2d2 52%, #fbfbfb); box-shadow:0 .3cqw .7cqw rgba(0,0,0,.18); color:#111; }
+[data-era="02"] .cap::before { content:""; position:absolute; z-index:2; left:1.3cqw; right:1.3cqw; top:.4cqw; height:46%; border-radius:4cqw; background:linear-gradient(rgba(255,255,255,.95), rgba(255,255,255,.2)); }
+[data-era="02"] .mod .cap { border-color:#8a9099; background:linear-gradient(#d3d7dd, #b7bcc4 52%, #edf0f3); }
+[data-era="02"] .accent .cap { border-color:#1d5baf; background:linear-gradient(#3e8ae6, #1f6ed6 52%, #7fc6ff); color:#0b1a2e; }
+[data-era="02"] .accent .cap::after { content:""; position:absolute; z-index:1; inset:0; border-radius:inherit; background:linear-gradient(#74b6f7, #4c96ec 52%, #b0e2ff); animation:breathe 1.9s ease-in-out infinite alternate; }
+@keyframes breathe { from { opacity:0; } to { opacity:.85; } }
+[data-era="02"] .down .cap { transform:translateY(.15cqw); background:linear-gradient(#c4c4c4, #aeaeae 52%, #d9d9d9); box-shadow:none; }
+[data-era="02"] .mod.down .cap { background:linear-gradient(#a9afb8, #8f959f 52%, #c5cbd3); }
+[data-era="02"] .accent.down .cap { background:linear-gradient(#2c6fc4, #14509f 52%, #5aa8ee); }
+[data-era="02"] .down .cap::before { opacity:.7; }
+[data-era="02"] .down .cap::after { animation:none; opacity:0; }
+
+/* 2011: soft grey gradients. */
+[data-era="11"] .board { background:linear-gradient(#ececec, #d3d3d3); }
+[data-era="11"] .cap { border-radius:2.5cqw; border:.13cqw solid #a9a9a9; background:linear-gradient(#fff, #e6e6e6); box-shadow:inset 0 .13cqw rgba(255,255,255,.9), 0 .2cqw .45cqw rgba(0,0,0,.16); }
+[data-era="11"] .mod .cap { border-color:#9c9c9c; background:linear-gradient(#f2f2f2, #d6d6d6); }
+[data-era="11"] .accent .cap { border-color:#3f78c2; background:linear-gradient(#9cc9f7, #3a8be6); color:#0e1e33; box-shadow:inset 0 .13cqw rgba(255,255,255,.45), 0 .2cqw .45cqw rgba(0,0,0,.16); }
+[data-era="11"] .down .cap { transform:translateY(.15cqw); background:linear-gradient(#d8d8d8, #c8c8c8); box-shadow:none; }
+[data-era="11"] .accent.down .cap { background:linear-gradient(#6aa6e6, #2163c2); }
+
+/* 2014: flat. */
+[data-era="14"] .board { background:#ececec; }
+[data-era="14"] .cap { border-radius:1.7cqw; border:.1cqw solid #c6c6c6; background:#fff; }
+[data-era="14"] .mod .cap { border-color:#c2c2c2; background:#f1f1f1; }
+[data-era="14"] .accent .cap { border-color:#1f7be3; background:linear-gradient(#69b1fa, #1c86f5); color:#fff; }
+[data-era="14"] .down .cap { background:#e2e2e2; }
+[data-era="14"] .accent.down .cap { background:linear-gradient(#3d8ee8, #0f6bd6); }
+
+/* 2020: rounded, with a soft shadow and no outline. */
+[data-era="20"] .board { background:#f5f5f7; }
+[data-era="20"] .cap { border-radius:3cqw; background:#fff; box-shadow:0 0 0 .08cqw rgba(0,0,0,.05), 0 .3cqw .8cqw rgba(0,0,0,.12); }
+[data-era="20"] .mod .cap { background:#f3f3f3; }
+[data-era="20"] .accent .cap { background:linear-gradient(#2c8dff, #0a70ea); color:#fff; }
+[data-era="20"] .down .cap { transform:translateY(.15cqw); background:#e5e5e5; box-shadow:0 0 0 .08cqw rgba(0,0,0,.05); }
+[data-era="20"] .accent.down .cap { background:linear-gradient(#0a68d8, #0056c2); }
+
+/* Measured like the board, so a swatch's outlines and type match the keys above. */
+.designs { container-type:inline-size; width:min(640px, 100%); margin-inline:auto; display:flex; justify-content:center; flex-wrap:wrap; gap:16px 12px; }
 .design { width:76px; padding:0; border:0; background:none; font:inherit; color:var(--quiet); cursor:pointer; -webkit-tap-highlight-color:transparent; }
-.chip { --u:56px; position:relative; display:block; width:var(--u); height:var(--u); margin:0 auto 10px; border-radius:13px; background:linear-gradient(var(--top) 0 14%, var(--mid) 55%, var(--bot) 90% 96%, var(--lip)); box-shadow:0 0 0 .5px var(--stroke), 0 3px 0 var(--lip), 0 6px 9px rgba(0,0,0,.2); transition:transform .15s cubic-bezier(.3,2,.5,1), box-shadow .12s ease; }
-.chip::before { content:""; position:absolute; inset:7px; border-radius:10px; background:linear-gradient(var(--dt) 22%, var(--db)); }
-.chip i { position:absolute; inset:0; margin:auto; width:15px; height:15px; border-radius:50%; background:var(--dot); }
-.design[aria-pressed="true"] .chip { transform:translateY(3px); box-shadow:0 0 0 .5px var(--stroke), 0 .5px 0 var(--lip), 0 1px 2px rgba(0,0,0,.25); }
+/* A swatch is one of that era's own keys, labelled with its year. */
+.swatch { display:block; width:8.8cqw; height:8.8cqw; margin:0 auto 10px; }
+.swatch .cap b { font-size:3.1cqw; }
 .design small { display:block; font-size:13px; line-height:1.3; transition:color .15s; }
 .design[aria-pressed="true"] small { color:var(--ink); font-weight:500; }
 .design:focus-visible, .pill:focus-visible, input:focus-visible, .link:focus-visible { outline:2px solid #2ba4f5; outline-offset:3px; border-radius:14px; }
@@ -112,12 +169,12 @@ footer nav { display:flex; gap:16px; flex-wrap:wrap; }
   .board-wrap { margin:32px auto 40px; }
   .key { height:15cqw; }
   .cap b { font-size:6cqw; } .cap b.small { font-size:4cqw; } .cap svg { width:5.6cqw; height:5.6cqw; }
-  .designs { display:grid; grid-template-columns:repeat(4,1fr); gap:16px 4px; } .design { width:auto; } .chip { --u:52px; }
+  .designs { display:grid; grid-template-columns:repeat(6,1fr); gap:16px 4px; } .design { width:auto; } .swatch { width:13cqw; height:13cqw; } .swatch .cap b { font-size:4.4cqw; }
   .feat { grid-template-columns:1fr; gap:28px; }
   section.text { padding-top:72px; }
   .join { flex-direction:column; } .join input { flex:none; } .join .pill { width:100%; }
 }
-@media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } .typed .caret { animation:none; } }
+@media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } .typed .caret, [data-era="02"] .accent .cap::after { animation:none; } }
 </style>
 </head>
 <body>
@@ -129,10 +186,10 @@ footer nav { display:flex; gap:16px; flex-wrap:wrap; }
 <main id="top">
   <section class="hero col">
     <div class="mark-line">
-      <button class="mark" id="mark" type="button" aria-label="Press the Clacky key"><img src="assets/clacky-mark.png" alt="" width="96" height="96" draggable="false"></button>
+      <button class="mark" id="mark" type="button" aria-label="Press the Clacky key to hear the next era"><img src="assets/clacky-mark.png" alt="" width="96" height="96" draggable="false"></button>
       <span class="mark-say" id="markSay" aria-live="polite"></span>
     </div>
-    <p class="say"><b>Clacky</b> is a mechanical keyboard for your iPhone. <b>Every key sinks, springs back and clacks.</b> Pick from eight designs, and <b>each one brings its own switch.</b></p>
+    <p class="say"><b>Clacky</b> turns your iPhone keyboard into buttons from computers past. <b>Type in 1984, 1997, 2002, 2011, 2014 or 2020,</b> each with <b>the sound of a real keyboard from its time.</b></p>
     <p class="when">The TestFlight beta opens in about 2–3 weeks, in English and 日本語.</p>
     <div class="actions">
       <a class="pill big" href="#join">Join the beta</a>
@@ -140,38 +197,38 @@ footer nav { display:flex; gap:16px; flex-wrap:wrap; }
     </div>
   </section>
 
-  <section class="play" id="play" aria-label="Try the keyboard">
+  <section class="play" id="play" aria-label="Try the eras">
     <div class="typed empty" id="typed" aria-live="off"><span class="text" id="text">Go on, press a key</span><span class="caret"></span></div>
-    <div class="board-wrap"><div class="board" id="board" aria-label="Playable keyboard"></div></div>
-    <div class="designs" id="designs" role="group" aria-label="Keyboard design"></div>
+    <div class="board-wrap" id="boardWrap" data-era="84"><div class="board" id="board" aria-label="Playable keyboard"></div></div>
+    <div class="designs" id="designs" role="group" aria-label="Era"></div>
     <p class="about"><span id="tagline"></span> <button class="link" id="mute" type="button">Sound on</button></p>
   </section>
 
   <section class="text col">
-    <p class="say">It’s the part of a keyboard people fall for. <b>The little travel, the spring and the sound,</b> now under your thumbs, in the apps you already type in.</p>
+    <p class="say">Remember the first computer you used? <b>The buttons you clicked and the keyboard you learned on,</b> now under your thumbs, in the apps you already type in.</p>
   </section>
 
   <section aria-label="Why Clacky">
     <div class="wide">
       <p class="feat-label">The joy of it</p>
       <ul class="feat">
-        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="3"/><path d="M8 5v3a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V5"/><path d="M12 13v3"/></svg></span><b>Keys that really move</b><span>Every key sinks under your thumb and springs back with a little overshoot, like the real thing.</span></li>
-        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg></span><b>A sound to get hooked on</b><span>Creamy, thocky or clicky. Keys on the left sound left, and keys on the right sound right.</span></li>
+        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="5" height="8" rx="1"/><rect x="9.5" y="8" width="5" height="8" rx="1.5"/><rect x="16" y="8" width="5" height="8" rx="2.5"/></svg></span><b>Six eras of buttons</b><span>One-bit pixels, bevelled grey, glossy gel, soft gradients, flat and rounded. Swipe the keys to travel between them.</span></li>
+        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg></span><b>The sound of the real thing</b><span>Every era plays keystrokes recorded from a real keyboard of its time. Keys on the left sound left, and keys on the right sound right.</span></li>
+        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="6" width="16" height="12" rx="2"/><path d="M8 12h8"/></svg></span><b>Pressed the way they were</b><span>1984 buttons invert, 1997 bevels flip, and the 2002 return key breathes like a default button waiting for you.</span></li>
         <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3" width="8" height="18" rx="2"/><path d="M4 9v6"/><path d="M20 9v6"/></svg></span><b>Felt in your thumbs</b><span>A soft tap of haptics on each press, so typing stops feeling like tapping on glass.</span></li>
-        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg></span><b>Eight designs, eight switches</b><span>Each one looks and sounds different. Swipe the keys to change whenever your mood does.</span></li>
-        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5"/><path d="M12 12v9"/></svg></span><b>An unboxing, every time</b><span>Buying a keyboard is half the fun. Cut the tape, peel the film, and hear it type its own name.</span></li>
-        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="11" rx="2.5"/><path d="M7 11h.01M11 11h.01M15 11h.01M8 14.5h8"/></svg></span><b>A desk toy in your pocket</b><span>Lift any keyboard out of the list and press every key, just because it feels good.</span></li>
+        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5"/><path d="M12 12v9"/></svg></span><b>An unboxing, every time</b><span>Buying an era is half the fun. Cut the tape, peel the film, and hear it type its own name.</span></li>
+        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="11" rx="2.5"/><path d="M7 11h.01M11 11h.01M15 11h.01M8 14.5h8"/></svg></span><b>A time machine in your pocket</b><span>Press the buttons in the app, just to hear each year again.</span></li>
       </ul>
       <p class="feat-label">The essentials</p>
       <ul class="feat">
         <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><b>Stays on your iPhone</b><span>What you type isn’t sent anywhere. The keyboard has no networking code, accounts, ads or analytics.</span></li>
-        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5 11 15l4.5-5.5"/></svg></span><b>Pay once</b><span>Two designs are free. The rest are $1.99 each, or $6.99 for all of them. No subscription.</span></li>
-        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.5"/></svg></span><b>Try before you buy</b><span>Test every design’s keys and sound in the app before you pay for anything.</span></li>
+        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5 11 15l4.5-5.5"/></svg></span><b>Pay once</b><span>Some eras are free. The rest are $1.99 each, or $6.99 for all of them. No subscription.</span></li>
+        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.5"/></svg></span><b>Try before you buy</b><span>Press every era’s buttons and hear its sound in the app before you pay for anything.</span></li>
         <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h9M8.5 4v2c0 4-2 7-4.5 8.5M6 10c1 2 3 3.5 5.5 4.5"/><path d="m12.5 20 4-9 4 9M14 17h5"/></svg></span><b>English and 日本語</b><span>Romaji to kanji conversion runs on your iPhone, so it works offline too.</span></li>
-        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 13.8 9.2 19 11l-5.2 1.8L12 18l-1.8-5.2L5 11l5.2-1.8z"/><path d="M19 17v3M17.5 18.5h3"/></svg></span><b>Still a smart keyboard</b><span>Autocorrect, suggestions and an emoji panel, so you give up nothing to get the clack.</span></li>
+        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 13.8 9.2 19 11l-5.2 1.8L12 18l-1.8-5.2L5 11l5.2-1.8z"/><path d="M19 17v3M17.5 18.5h3"/></svg></span><b>Still a smart keyboard</b><span>Autocorrect, suggestions and an emoji panel, so you give up nothing for the nostalgia.</span></li>
         <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8 9h8M8 12.5h8M8 16h5"/></svg></span><b>In the apps you already use</b><span>Add it once and it’s there for your messages, notes and mail.</span></li>
       </ul>
-      <p class="fine">Sound, haptics and paid designs need iOS’s Allow Full Access. Typing with the free designs works without it, and iOS uses its own keyboard for passwords. <a href="privacy/">How your privacy is protected</a>.</p>
+      <p class="fine">Sound, haptics and paid eras need iOS’s Allow Full Access. Typing with the free eras works without it, and iOS uses its own keyboard for passwords. <a href="privacy/">How your privacy is protected</a>. Keyboard sounds are cut from recordings shared on Freesound: <a href="support/#sounds">sound credits</a>.</p>
     </div>
   </section>
 
@@ -185,7 +242,7 @@ footer nav { display:flex; gap:16px; flex-wrap:wrap; }
   </section>
 
   <section class="text col">
-    <p class="say">Made in Tokyo by <span class="avatar"><img src="assets/raufan.jpg" alt="" width="34" height="34"></span> <b>Raufan,</b> a product designer who wanted a phone that feels a bit more like a desk.</p>
+    <p class="say">Made in Tokyo by <span class="avatar"><img src="assets/raufan.jpg" alt="" width="34" height="34"></span> <b>Raufan,</b> a product designer who grew up clicking these buttons.</p>
   </section>
 </main>
 
@@ -195,112 +252,41 @@ footer nav { display:flex; gap:16px; flex-wrap:wrap; }
 </div></footer>
 
 <script>
-/* ---- Designs: the same palettes as the app ---- */
-const cap = (top, mid, bot, lip, stroke, dt, db, lg) => ({ top, mid, bot, lip, stroke, dt, db, lg });
-const milkCap = cap('#FFFEFF','#F2F2F2','#E7E7E7','#C8C8C8','#C4C4C4','#F1F1F1','#FDFDFD','#4F4F4F');
-const THEMES = {
-  milk: { name:'Milk', line:'Creamy, soft and rounded', panel:'#E4E7EB', edge:'#C9CDD3', alpha:milkCap, mod:milkCap,
-    accent:cap('#4AB4FE','#47B3FF','#2BA4F5','#0094F1','#0A8BE0','#32A9F4','#44B1FD','#F2FBFF') },
-  retro: { name:'Retro', line:'Clicky, crisp and a little loud', panel:'#D9D2C2', edge:'#BFB7A5',
-    alpha:cap('#F6F0E1','#E9E2D0','#DAD2BE','#B5AC96','#B0A791','#E5DECB','#F3EDDD','#45402F'),
-    mod:cap('#BDB5A3','#AEA693','#A09884','#7E7663','#7F7764','#A9A18E','#B9B19E','#2F2B20'),
-    accent:cap('#E9694A','#E05C3D','#CF4E30','#A93A20','#A63A21','#D95536','#E7674A','#FFF3E8') },
-  midnight: { name:'Midnight', line:'Thocky, deep and low', panel:'#17181C', edge:'#050506',
-    alpha:cap('#4A4D56','#363941','#2A2C33','#141519','#0E0F12','#2E3037','#3D4048','#E9E9ED'),
-    mod:cap('#3A3C44','#2A2C32','#212227','#0F1013','#0B0C0E','#24262B','#31333A','#A9ABB3'),
-    accent:cap('#FFB85C','#F6A63E','#E8932A','#B56A12','#A86212','#EE9C32','#FBB04E','#2B1B05') },
-  matcha: { name:'Matcha', line:'Poppy, bright and bouncy', panel:'#DCE3D3', edge:'#C0C9B5',
-    alpha:cap('#FBFDF7','#F0F3E9','#E3E8DA','#BFC8B1','#BAC3AC','#ECF0E4','#FAFCF5','#46523A'),
-    mod:cap('#C4D6A9','#B5C997','#A6BC87','#83996A','#84996B','#AFC391','#C1D3A6','#2F3C21'),
-    accent:cap('#6E9A4D','#5F8C40','#527D35','#3B6023','#3B5F24','#5A8739','#6C984B','#F5FBEC') },
-  blush: { name:'Blush', line:'Silky, soft and warm', panel:'#EADBD6', edge:'#CFBEB8',
-    alpha:cap('#FBF5EC','#F2E9DD','#E6DACC','#C9B9AB','#C4B3A5','#EFE5D8','#F9F2E9','#5A4149'),
-    mod:cap('#CFA3AD','#C2939E','#B5848F','#926570','#93666F','#BF8F9B','#CCA0AA','#3F2A32'),
-    accent:cap('#7A4A5C','#6C3F50','#5F3545','#44232F','#452430','#663A4B','#754759','#FBEFEA') },
-  neon: { name:'Neon', line:'Snappy, sharp and bright', panel:'#171330', edge:'#07051A',
-    alpha:cap('#3A3366','#2B2550','#211C40','#0F0C22','#0B0919','#26204A','#322B5C','#63F5D2'),
-    mod:cap('#6E4DF0','#5C3CDC','#4C2FC4','#2F1B8C','#2C1985','#5535D0','#6547E6','#F1EEFF'),
-    accent:cap('#FF6A9E','#FB4F8B','#EC3B78','#B01F52','#A81D4E','#F24482','#FF5E94','#2A0716') },
-  lunchbox: { name:'Lunchbox', line:'Bubbly, light and cheerful', panel:'#F4E7C5', edge:'#D8CBA8',
-    alpha:cap('#FFFDF6','#F8F4E8','#EEE8D8','#CFC8B4','#CAC3AF','#F4EFE2','#FDFAF1','#566A70'),
-    mod:cap('#B7E3D8','#A6D8CB','#95CCBE','#6FA99A','#70A99B','#A0D3C6','#B0DED2','#2F5249'),
-    accent:cap('#F8A18D','#F4907A','#EA7F68','#BE5A45','#B85843','#EF8A73','#F79A85','#4A1C11') },
-  ronin: { name:'Ronin', line:'Heavy, dark and deliberate', panel:'#12141C', edge:'#04050A',
-    alpha:cap('#34405F','#26314D','#1D263E','#0D1220','#0A0E19','#212B46','#2C3755','#EADCB2'),
-    mod:cap('#3A3A40','#2C2C31','#222226','#101012','#0C0C0E','#28282D','#333338','#BDB291'),
-    accent:cap('#D9533F','#C84632','#B63A28','#83261A','#7D2418','#BF3F2D','#D14C39','#FFF1DE') },
+/* ---- Eras: the same six as the app ---- */
+const ERAS = {
+  '84': { name:'1984', sw:'Crisp', line:'Black and white, crisp and clacky' },
+  '97': { name:'1997', sw:'Cushioned', line:'Grey, bevelled and softly cushioned' },
+  '02': { name:'2002', sw:'Quiet', line:'Glossy, clear and quiet' },
+  '11': { name:'2011', sw:'Thin', line:'Soft gradients, slim and crisp' },
+  '14': { name:'2014', sw:'Slim', line:'Flat, light and tidy' },
+  '20': { name:'2020', sw:'Firm', line:'Rounded, bright and firm' },
 };
-const setCap = (el, c) => { for (const k in c) el.style.setProperty('--' + k, c[k]); };
+// Listed explicitly: number-like keys would otherwise be put in numeric order.
+const ORDER = ['84', '97', '02', '11', '14', '20'];
 
-/* ---- Sound: the app's switch recipes, rendered with Web Audio ---- */
-const m = (f, d, g) => [f, d, g];
-const SWITCHES = {
-  milk: { modes:[m(290,.016,.8),m(540,.013,1),m(980,.009,.75),m(1650,.006,.42),m(2700,.0035,.22),m(4200,.002,.1)], tone:5200, contact:.05, click:0, spring:0, room:.2, travel:.0075 },
-  midnight: { modes:[m(170,.02,.55),m(290,.017,.95),m(460,.013,.9),m(820,.008,.62),m(1450,.0045,.32),m(2500,.0025,.12)], tone:3400, contact:.04, click:0, spring:0, room:.28, travel:.009 },
-  retro: { modes:[m(420,.01,.5),m(830,.008,.62),m(1500,.006,.62),m(2600,.0045,.5),m(4100,.003,.36),m(6000,.002,.2)], tone:9500, contact:.05, click:.8, spring:.016, room:.16, travel:.0105 },
-  blush: { modes:[m(330,.015,.75),m(610,.012,1),m(1090,.008,.62),m(1800,.005,.3),m(2900,.003,.14),m(4400,.0018,.06)], tone:4400, contact:.035, click:0, spring:0, room:.24, travel:.0085 },
-  neon: { modes:[m(560,.008,.55),m(1050,.007,.85),m(1800,.0055,.8),m(3000,.004,.55),m(4700,.0026,.34),m(6600,.0016,.18)], tone:10000, contact:.06, click:.28, spring:.006, room:.12, travel:.0055 },
-  lunchbox: { modes:[m(610,.013,.8),m(1040,.011,1),m(1680,.007,.62),m(2500,.0042,.3),m(3800,.0026,.14),m(5600,.0016,.06)], tone:6400, contact:.04, click:0, spring:0, room:.22, travel:.006 },
-  ronin: { modes:[m(150,.022,.5),m(245,.02,1),m(410,.015,.86),m(720,.009,.5),m(1280,.005,.24),m(2200,.0028,.09)], tone:3000, contact:.045, click:0, spring:0, room:.32, travel:.0105 },
-  matcha: { modes:[m(480,.011,.7),m(860,.01,1),m(1420,.007,.82),m(2300,.0045,.46),m(3600,.0028,.22),m(5400,.0018,.1)], tone:7200, contact:.05, click:0, spring:.004, room:.18, travel:.0065 },
-};
-const SR = 44100;
-function renderSound(p, kind, seed) {
-  let s = seed * 2654435761 >>> 0 || 1;
-  const rnd = (lo, hi) => { s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return lo + ((t ^ t >>> 14) >>> 0) / 4294967296 * (hi - lo); };
-  const out = new Float64Array(Math.floor(SR * .15));
-  const strike = (time, modes, scale, decay, level) => {
-    const start = Math.floor(time * SR), bl = Math.floor(.0011 * SR);
-    const burst = Array.from({ length: bl }, (_, i) => rnd(-1, 1) * Math.exp(-i / (.00035 * SR)));
-    for (const [f0, d, g] of modes) {
-      const f = f0 * scale * rnd(.97, 1.03); if (f >= SR * .45) continue;
-      const gain = g * rnd(.85, 1.15) * level, w = 2 * Math.PI * f / SR, r = Math.exp(-1 / (d * decay * SR));
-      const a1 = 2 * r * Math.cos(w), a2 = -r * r, input = Math.sin(w) * gain;
-      let y1 = 0, y2 = 0;
-      for (let i = start; i < out.length; i++) { const o = i - start; const y = (o < bl ? burst[o] * input : 0) + a1 * y1 + a2 * y2; y2 = y1; y1 = y; out[i] += y; }
-    }
-  };
-  const contact = lvl => { let prev = 0; for (let i = 0; i < .006 * SR; i++) { const w = rnd(-1, 1); out[i] += (w - prev) * lvl * 2 * Math.exp(-i / (.0012 * SR)); prev = w; } };
-  const spring = (time, lvl) => { if (!lvl) return; const st = Math.floor(time * SR), f = 5100 * rnd(.96, 1.04); for (let i = st; i < out.length; i++) { const t = (i - st) / SR; out[i] += Math.sin(2 * Math.PI * f * t) * Math.exp(-t / .024) * lvl * 4; } };
-  const bottom = p.travel * rnd(.88, 1.12);
-  if (kind === 'down') {
-    contact(p.contact);
-    if (p.click) strike(bottom * .45, [m(3100,.0014,1),m(4700,.001,.8),m(6400,.0008,.45)], 1, 1, p.click);
-    strike(bottom, p.modes, 1, 1, 1); spring(bottom, p.spring);
-  } else if (kind === 'up') {
-    strike(.001, p.modes, 1.34, .62, 1); spring(.001, p.spring * 1.4);
-  } else if (kind === 'space') {
-    contact(p.contact); strike(bottom, p.modes, .84, 1.3, 1);
-    const wire = [m(1900,.003,1),m(3100,.002,.7)];
-    strike(bottom + .009, wire, 1, 1, .11); strike(bottom + .018, wire, 1.08, 1, .06);
-  } else {
-    contact(p.contact); strike(bottom, p.modes, .88, 1.16, 1);
-  }
-  const lc = 1 - Math.exp(-2 * Math.PI * p.tone / SR), dc = 1 - Math.exp(-2 * Math.PI * 70 / SR);
-  let low = 0, dcv = 0;
-  for (let i = 0; i < out.length; i++) { low += lc * (out[i] - low); dcv += dc * (low - dcv); out[i] = low - dcv; }
-  const dry = out.slice();
-  for (const [delay, g] of [[.0031,.6],[.0053,-.42],[.0087,.34],[.0131,-.24],[.0197,.16],[.0283,.1]]) {
-    const o = Math.floor(delay * SR); for (let i = o; i < out.length; i++) out[i] += dry[i - o] * g * p.room * 2;
-  }
-  const target = { down:.72, up:.24, space:.8, mod:.66 }[kind];
-  let peak = 1e-4; for (const v of out) peak = Math.max(peak, Math.abs(v));
-  const res = new Float32Array(out.length), last = out.length - 1;
-  for (let i = 0; i < out.length; i++) res[i] = Math.tanh(out[i] / peak * target * 1.15) * Math.min(1, (last - i) / (SR * .012));
-  return res;
-}
+/* ---- Sound: the app's recorded keystrokes. One file per era: six presses, a release, space, then a modifier. ---- */
+const SPANS = {"84":[[0,2684],[2748,3608],[6420,5292],[11776,2508],[14348,4488],[18900,3872],[22836,3969],[26869,2288],[29221,3608]],"97":[[0,3388],[3452,5292],[8808,4488],[13360,3388],[16812,3652],[20528,5292],[25884,3969],[29917,4136],[34117,4180]],"02":[[0,4840],[4904,5292],[10260,3212],[13536,4400],[18000,4620],[22684,5016],[27764,2024],[29852,4444],[34360,5733]],"11":[[0,3168],[3232,5292],[8588,4752],[13404,3608],[17076,2508],[19648,2772],[22484,1760],[24308,4004],[28376,3740]],"14":[[0,1716],[1780,2552],[4396,1496],[5956,5292],[11312,5292],[16668,5292],[22024,3256],[25344,7056],[32464,5280]],"20":[[0,5292],[5356,2464],[7884,2288],[10236,4532],[14832,2948],[17844,2332],[20240,2772],[23076,4048],[27188,5733]]};
 let audio, muted = false, variant = 0;
-const banks = {};
-function bank(id) {
-  if (banks[id] || !audio) return banks[id];
-  const buf = d => { const b = audio.createBuffer(1, d.length, SR); b.copyToChannel(d, 0); return b; };
-  const p = SWITCHES[id];
-  return banks[id] = { down:[1,2,3,4,5,6].map(i => buf(renderSound(p, 'down', i))), up:buf(renderSound(p, 'up', 21)), space:buf(renderSound(p, 'space', 31)), mod:buf(renderSound(p, 'mod', 41)) };
+const banks = {}, loading = {};
+function load(id) {
+  if (!audio || banks[id] || loading[id]) return;
+  loading[id] = fetch(`assets/sounds/era${id}.wav`).then(r => r.arrayBuffer()).then(d => audio.decodeAudioData(d)).then(buf => {
+    const data = buf.getChannelData(0), part = ([start, length]) => {
+      const b = audio.createBuffer(1, length, buf.sampleRate); b.copyToChannel(data.subarray(start, start + length), 0); return b;
+    };
+    const s = SPANS[id].map(part);
+    banks[id] = { down:s.slice(0, 6), up:s[6], space:s[7], mod:s[8] };
+  }).catch(() => { delete loading[id]; });
 }
-function wake() { if (!audio) { const C = window.AudioContext || window.webkitAudioContext; if (C) audio = new C(); } if (audio && audio.state === 'suspended') audio.resume(); }
+function wake() {
+  if (!audio) { const C = window.AudioContext || window.webkitAudioContext; if (C) audio = new C(); }
+  if (audio && audio.state === 'suspended') audio.resume();
+  load(theme);
+}
 function sound(kind, pan = 0, id = theme) {
   if (muted || !audio) return;
-  const b = bank(id), src = audio.createBufferSource();
+  const b = banks[id]; if (!b) { load(id); return; }
+  const src = audio.createBufferSource();
   if (kind === 'down') { variant = (variant + 1) % b.down.length; src.buffer = b.down[variant]; } else src.buffer = b[kind];
   const out = audio.createStereoPanner ? audio.createStereoPanner() : null;
   if (out) { out.pan.value = pan; src.connect(out).connect(audio.destination); } else src.connect(audio.destination);
@@ -319,7 +305,7 @@ const LETTERS = ['qwertyuiop','asdfghjkl','zxcvbnm'], NUMBERS = ['1234567890','-
 const FACES = ['😀','😎','🥹','🤌','🔥','🫶','✨','🎹'];
 const $ = id => document.getElementById(id);
 const board = $('board'), typedEl = $('typed'), textEl = $('text');
-let theme = 'milk', shift = true, numbers = false, typed = '';
+let theme = '84', shift = true, numbers = false, typed = '';
 const motion = !matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const spec = (id, label, kind, w) => ({ id, label, kind, w });
@@ -343,7 +329,7 @@ function build() {
       b.setAttribute('aria-label', { ' ':'space', del:'delete', ret:'return', shift:'shift', face:'emoji', mode:'switch layout' }[k.id] || k.id);
       const small = k.id === 'mode' ? ' class="small"' : '';
       b.innerHTML = `<span class="cap"><b${small}>${k.label}</b></span>`;
-      b._kind = k.kind; setCap(b, THEMES[theme][k.kind]);
+      b.classList.add(k.kind);
       rowEl.append(b); if (k.id) keyEls.set(k.id, b);
     }
     board.append(rowEl);
@@ -410,44 +396,44 @@ addEventListener('keydown', e => {
 addEventListener('keyup', e => { const el = physical.get(e.code); if (el) { physical.delete(e.code); lift(el); } });
 addEventListener('blur', () => { for (const el of physical.values()) el.classList.remove('down'); physical.clear(); });
 
-/* ---- Picking a design: a wave rolls across the caps ---- */
-const designs = $('designs'), tagline = $('tagline');
-function setBoard(t) { board.style.setProperty('--panel', t.panel); board.style.setProperty('--edge', t.edge); }
+/* ---- Picking an era: the board changes, then a ripple of presses rolls across it ---- */
+const designs = $('designs'), tagline = $('tagline'), boardWrap = $('boardWrap');
 function pick(id, animate = true) {
   if (id === theme && animate) return;
-  theme = id; const t = THEMES[id];
+  theme = id; const t = ERAS[id];
   tagline.textContent = t.line + '.';
-  [...designs.children].forEach(b => b.setAttribute('aria-pressed', b.dataset.id === id));
-  setBoard(t);
-  const b = board.getBoundingClientRect();
-  for (const el of board.querySelectorAll('.key')) {
-    const c = t[el._kind];
-    if (!animate || !motion) { setCap(el, c); continue; }
-    const r = el.getBoundingClientRect(), delay = (r.left - b.left) / b.width * 320 + (r.top - b.top) / b.height * 60;
-    setTimeout(() => { el.classList.add('down'); setTimeout(() => { setCap(el, c); el.classList.remove('down'); }, 55); }, delay);
+  boardWrap.dataset.era = id;
+  [...designs.children].forEach(b => { const on = b.dataset.id === id; b.setAttribute('aria-pressed', on); b.firstChild.classList.toggle('down', on); });
+  if (audio) load(id);
+  if (!animate) return;
+  wake();
+  if (motion) {
+    const b = board.getBoundingClientRect();
+    for (const el of board.querySelectorAll('.key')) {
+      const r = el.getBoundingClientRect(), delay = (r.left - b.left) / b.width * 320 + (r.top - b.top) / b.height * 60;
+      setTimeout(() => { el.classList.add('down'); setTimeout(() => el.classList.remove('down'), 70); }, delay);
+    }
   }
-  if (animate) { wake(); [0, 70, 150, 215].forEach((d, i) => setTimeout(() => sound(i === 3 ? 'space' : 'down', i * .2 - .3, id), d)); }
+  [0, 90, 180, 260].forEach((d, i) => setTimeout(() => sound(i === 3 ? 'space' : 'down', i * .2 - .3, id), d + 60));
 }
-for (const [id, t] of Object.entries(THEMES)) {
+for (const id of ORDER) {
   const b = document.createElement('button');
-  b.className = 'design'; b.type = 'button'; b.dataset.id = id; b.setAttribute('aria-pressed', 'false');
-  b.innerHTML = `<span class="chip"><i></i></span><small>${t.name}</small>`;
-  const chip = b.firstChild; setCap(chip, t.alpha); chip.style.setProperty('--dot', t.accent.mid);
+  b.className = 'design'; b.type = 'button'; b.dataset.id = id; b.dataset.era = id; b.setAttribute('aria-pressed', 'false'); b.setAttribute('aria-label', ERAS[id].name);
+  b.innerHTML = `<span class="swatch"><span class="cap"><b>\u2019${id}</b></span></span><small>${ERAS[id].name}</small>`;
   b.addEventListener('click', () => pick(id));
   designs.append(b);
 }
 $('mute').addEventListener('click', e => { muted = !muted; e.target.textContent = muted ? 'Sound off' : 'Sound on'; if (!muted) { wake(); sound('down'); } });
 
-/* ---- The logo is a key: each press tries the next switch ---- */
-const SWITCH_NAMES = { milk:'Creamy', retro:'Clicky', midnight:'Thock', matcha:'Poppy', blush:'Silky', neon:'Snappy', lunchbox:'Bubbly', ronin:'Heavy' };
+/* ---- The logo is a key: each press steps to the next era ---- */
 const mark = $('mark'), markSay = $('markSay');
 let markNext = 1, markTimer;
 function markPress() {
-  const id = Object.keys(THEMES)[markNext % 8];
+  const id = ORDER[markNext % ORDER.length];
   markNext++;
-  wake(); sound('down', 0, id);
-  pick(id, false);
-  markSay.innerHTML = `<b>${SWITCH_NAMES[id]}</b> · ${THEMES[id].name}`;
+  wake(); load(id);
+  pick(id, false); sound('down', 0, id);
+  markSay.innerHTML = `<b>${ERAS[id].name}</b> · ${ERAS[id].sw}`;
   markSay.classList.add('on');
   clearTimeout(markTimer); markTimer = setTimeout(() => markSay.classList.remove('on'), 1800);
 }
@@ -483,7 +469,7 @@ form.addEventListener('submit', async e => {
   }
 });
 
-setBoard(THEMES.milk); build(); pick('milk', false);
+build(); pick('84', false);
 </script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "dd0ef521e45e41a5b3a29d6a961d06ef"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
