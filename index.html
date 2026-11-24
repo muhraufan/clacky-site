@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Pixelify+Sans:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root { --ink:#111; --quiet:#8d8d8a; --soft:#f4f4f2; --say:34px; }
 * { box-sizing:border-box; margin:0; }
@@ -25,7 +25,8 @@ header .col { height:64px; display:flex; align-items:center; justify-content:spa
 
 /* The main buttons are 2002 gel, the same as the app's. */
 .pill { position:relative; isolation:isolate; display:inline-flex; align-items:center; justify-content:center; border:1px solid #1d5baf; border-radius:99px; background:linear-gradient(#3e8ae6, #1f6ed6 52%, #7fc6ff); color:#0b1a2e; font:inherit; font-weight:500; text-decoration:none; cursor:pointer; transition:transform .12s ease, opacity .15s ease; white-space:nowrap; box-shadow:0 2px 6px rgba(20,60,120,.22); }
-.pill::before { content:""; position:absolute; z-index:-1; left:8%; right:8%; top:1px; height:46%; border-radius:99px; background:linear-gradient(rgba(255,255,255,.95), rgba(255,255,255,.2)); }
+.pill::before { content:""; position:absolute; z-index:-1; left:8%; right:8%; top:1px; height:46%; border-radius:99px; background:linear-gradient(rgba(255,255,255,.95), rgba(255,255,255,0)); }
+[data-era="02"] .accent .cap::before { background:linear-gradient(rgba(255,255,255,.95), rgba(255,255,255,.2)); }
 .pill:active { transform:translateY(1px); background:linear-gradient(#2c6fc4, #14509f 52%, #5aa8ee); }
 .pill.small { height:36px; padding:0 16px; font-size:14px; }
 .pill.big { height:48px; padding:0 24px; }
@@ -67,11 +68,16 @@ header .col { height:64px; display:flex; align-items:center; justify-content:spa
 .cap b.small { font-size:3.3cqw; }
 .cap svg { width:4.8cqw; height:4.8cqw; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
 .down .cap { transition:none; }
+/* 1984 letters come from the app's own hand-drawn pixel font, one SVG rect per pixel. */
+.cap { --fp:.32cqw; }
+.cap b svg.px { display:none; width:auto; height:calc(13 * var(--fp)); fill:currentColor; stroke:none; shape-rendering:crispEdges; }
+[data-era="84"] .cap b svg.px { display:block; }
+[data-era="84"] .cap b .px + .tx { display:none; }
 
 /* 1984: one-bit pixels. Pressed buttons invert. */
 [data-era="84"] .board { background:#fff radial-gradient(rgba(0,0,0,.17) .55px, transparent .7px) 0 0 / 3px 3px; }
 [data-era="84"] .cap { background:#fff; border:.32cqw solid #000; border-radius:.9cqw; box-shadow:.32cqw .32cqw 0 #000; color:#000; }
-[data-era="84"] .cap b { font-family:"Pixelify Sans", monospace; font-weight:600; }
+[data-era="84"] .cap b { font-weight:700; }
 [data-era="84"] .cap svg { stroke-width:2.6; stroke-linecap:square; stroke-linejoin:miter; }
 [data-era="84"] .accent .cap { box-shadow:inset 0 0 0 .32cqw #fff, inset 0 0 0 .64cqw #000, .32cqw .32cqw 0 #000; }
 [data-era="84"] .down .cap { background:#000; color:#fff; }
@@ -83,45 +89,54 @@ header .col { height:64px; display:flex; align-items:center; justify-content:spa
 [data-era="97"] .cap svg { stroke-width:2.3; }
 [data-era="97"] .mod .cap { background:#c9c9c9; }
 [data-era="97"] .accent .cap { box-shadow:inset .26cqw .26cqw #fff, inset -.26cqw -.26cqw #888, inset .52cqw .52cqw #eee, inset -.52cqw -.52cqw #aaa, 0 0 0 .45cqw #a8a8a8, 0 0 0 .67cqw #262626; }
-[data-era="97"] .down .cap { background:#6a6a6a; color:#fff; box-shadow:inset .26cqw .26cqw #444, inset -.26cqw -.26cqw #8e8e8e, inset .52cqw .52cqw #555, inset -.52cqw -.52cqw #7c7c7c; }
+[data-era="97"] .down .cap { background:#a4a4a4; box-shadow:inset .26cqw .26cqw #6e6e6e, inset -.26cqw -.26cqw #d4d4d4, inset .52cqw .52cqw #8a8a8a, inset -.52cqw -.52cqw #bcbcbc; }
 
 /* 2002: glossy gel. The return key breathes like a default button. */
 [data-era="02"] .board { background:repeating-linear-gradient(#f4f4f4 0 1px, #e8e8e8 1px 2px); }
-[data-era="02"] .cap { border-radius:4.2cqw; border:.15cqw solid #9a9a9a; background:linear-gradient(#eaeaea, #d2d2d2 52%, #fbfbfb); box-shadow:0 .3cqw .7cqw rgba(0,0,0,.18); color:#111; }
+[data-era="02"] .cap { border-radius:4.2cqw; border:.15cqw solid #a3a3a3; background:linear-gradient(#f4f4f4, #e3e3e3 52%, #fefefe); box-shadow:0 .3cqw .7cqw rgba(0,0,0,.18); color:#111; }
 [data-era="02"] .cap::before { content:""; position:absolute; z-index:2; left:1.3cqw; right:1.3cqw; top:.4cqw; height:46%; border-radius:4cqw; background:linear-gradient(rgba(255,255,255,.95), rgba(255,255,255,.2)); }
-[data-era="02"] .mod .cap { border-color:#8a9099; background:linear-gradient(#d3d7dd, #b7bcc4 52%, #edf0f3); }
+[data-era="02"] .mod .cap { border-color:#8f959e; background:linear-gradient(#dce0e5, #c6cbd2 52%, #f1f3f6); }
 [data-era="02"] .accent .cap { border-color:#1d5baf; background:linear-gradient(#3e8ae6, #1f6ed6 52%, #7fc6ff); color:#0b1a2e; }
 [data-era="02"] .accent .cap::after { content:""; position:absolute; z-index:1; inset:0; border-radius:inherit; background:linear-gradient(#74b6f7, #4c96ec 52%, #b0e2ff); animation:breathe 1.9s ease-in-out infinite alternate; }
 @keyframes breathe { from { opacity:0; } to { opacity:.85; } }
-[data-era="02"] .down .cap { transform:translateY(.15cqw); background:linear-gradient(#c4c4c4, #aeaeae 52%, #d9d9d9); box-shadow:none; }
+[data-era="02"] .down .cap { transform:translateY(.15cqw); background:linear-gradient(#cdcdcd, #bdbdbd 52%, #e2e2e2); box-shadow:none; }
 [data-era="02"] .mod.down .cap { background:linear-gradient(#a9afb8, #8f959f 52%, #c5cbd3); }
 [data-era="02"] .accent.down .cap { background:linear-gradient(#2c6fc4, #14509f 52%, #5aa8ee); }
 [data-era="02"] .down .cap::before { opacity:.7; }
 [data-era="02"] .down .cap::after { animation:none; opacity:0; }
 
 /* 2011: soft grey gradients. */
-[data-era="11"] .board { background:linear-gradient(#ececec, #d3d3d3); }
-[data-era="11"] .cap { border-radius:2.5cqw; border:.13cqw solid #a9a9a9; background:linear-gradient(#fff, #e6e6e6); box-shadow:inset 0 .13cqw rgba(255,255,255,.9), 0 .2cqw .45cqw rgba(0,0,0,.16); }
-[data-era="11"] .mod .cap { border-color:#9c9c9c; background:linear-gradient(#f2f2f2, #d6d6d6); }
-[data-era="11"] .accent .cap { border-color:#3f78c2; background:linear-gradient(#9cc9f7, #3a8be6); color:#0e1e33; box-shadow:inset 0 .13cqw rgba(255,255,255,.45), 0 .2cqw .45cqw rgba(0,0,0,.16); }
-[data-era="11"] .down .cap { transform:translateY(.15cqw); background:linear-gradient(#d8d8d8, #c8c8c8); box-shadow:none; }
-[data-era="11"] .accent.down .cap { background:linear-gradient(#6aa6e6, #2163c2); }
+[data-era="11"] .board { background:repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 .5px, rgba(0,0,0,.035) .5px 1px), repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 .5px, rgba(0,0,0,.035) .5px 1px), linear-gradient(#e6e6e3, #cfcfcb); }
+[data-era="11"] .cap { border-radius:2.5cqw; border:.13cqw solid; border-color:#b4b6ba #9a9ca0 #7f8186; background:linear-gradient(#fff, #e2e3e6); box-shadow:inset 0 .16cqw #fff, 0 .16cqw 0 rgba(0,0,0,.32); }
+[data-era="11"] .cap b { text-shadow:0 .16cqw 0 rgba(255,255,255,.85); }
+[data-era="11"] .cap svg { filter:drop-shadow(0 .16cqw 0 rgba(255,255,255,.85)); }
+[data-era="11"] .mod .cap { border-color:#9da1a8 #868a91 #6f737a; background:linear-gradient(#e4e6ea, #b9bdc4); box-shadow:inset 0 .16cqw rgba(255,255,255,.75), 0 .16cqw 0 rgba(0,0,0,.32); }
+[data-era="11"] .accent .cap { border-color:#4f86cc #3a6fb4 #1f4f94; background:linear-gradient(#8ec1f7, #5a9fef 50%, #3f8ae8 52%, #2f78d8); color:#0e1e33; box-shadow:inset 0 .16cqw rgba(255,255,255,.6), 0 .16cqw 0 rgba(0,0,0,.32); }
+[data-era="11"] .down .cap { transform:translateY(.1cqw); background:linear-gradient(#d2d4d8, #c4c6cb); box-shadow:inset 0 .16cqw rgba(255,255,255,.2), 0 .06cqw 0 rgba(0,0,0,.32); }
+[data-era="11"] .mod.down .cap { background:linear-gradient(#b4b8bf, #a0a4ab); }
+[data-era="11"] .accent.down .cap { background:linear-gradient(#5b97de, #2160b8); }
 
-/* 2014: flat. */
-[data-era="14"] .board { background:#ececec; }
-[data-era="14"] .cap { border-radius:1.7cqw; border:.1cqw solid #c6c6c6; background:#fff; }
-[data-era="14"] .mod .cap { border-color:#c2c2c2; background:#f1f1f1; }
-[data-era="14"] .accent .cap { border-color:#1f7be3; background:linear-gradient(#69b1fa, #1c86f5); color:#fff; }
-[data-era="14"] .down .cap { background:#e2e2e2; }
-[data-era="14"] .accent.down .cap { background:linear-gradient(#3d8ee8, #0f6bd6); }
+/* 2014: flat and a little see-through over frosted colour, hairline outlines, thin letters. */
+[data-era="14"] .board { background:linear-gradient(rgba(255,255,255,.42), rgba(255,255,255,.42)), radial-gradient(circle at 12% 20%, rgba(255,154,139,.85), transparent 55%), radial-gradient(circle at 50% 100%, rgba(127,209,255,.85), transparent 60%), radial-gradient(circle at 90% 25%, rgba(185,164,255,.85), transparent 50%), radial-gradient(circle at 72% 90%, rgba(142,240,195,.85), transparent 35%), #eef1f6; }
+[data-era="14"] .cap { border-radius:1.7cqw; border:.5px solid rgba(0,0,0,.16); background:rgba(255,255,255,.9); }
+[data-era="14"] .cap b { font-weight:300; }
+[data-era="14"] .cap svg { stroke-width:1.2; }
+[data-era="14"] .mod .cap { background:rgba(240,240,240,.72); }
+[data-era="14"] .accent .cap { border-color:#1a7be0; background:#1c86f5; color:#fff; }
+[data-era="14"] .down .cap { background:rgba(214,214,214,.9); }
+[data-era="14"] .mod.down .cap { background:rgba(252,252,252,.95); }
+[data-era="14"] .accent.down .cap { background:#0f6ad0; }
 
-/* 2020: rounded, with a soft shadow and no outline. */
-[data-era="20"] .board { background:#f5f5f7; }
-[data-era="20"] .cap { border-radius:3cqw; background:#fff; box-shadow:0 0 0 .08cqw rgba(0,0,0,.05), 0 .3cqw .8cqw rgba(0,0,0,.12); }
-[data-era="20"] .mod .cap { background:#f3f3f3; }
-[data-era="20"] .accent .cap { background:linear-gradient(#2c8dff, #0a70ea); color:#fff; }
-[data-era="20"] .down .cap { transform:translateY(.15cqw); background:#e5e5e5; box-shadow:0 0 0 .08cqw rgba(0,0,0,.05); }
-[data-era="20"] .accent.down .cap { background:linear-gradient(#0a68d8, #0056c2); }
+/* 2020: plump keys on a soft shadow, bolder letters. A press gives a little squeeze. */
+[data-era="20"] .board { background:linear-gradient(#fafafc, #edeef2); }
+[data-era="20"] .cap { border-radius:3.6cqw; background:linear-gradient(#fff, #f7f7f9); box-shadow:0 0 0 .08cqw rgba(0,0,0,.05), 0 .3cqw .9cqw rgba(0,0,0,.13); transition:transform .18s cubic-bezier(.3,1.5,.5,1), box-shadow .18s ease; }
+[data-era="20"] .cap b { font-weight:500; }
+[data-era="20"] .cap svg { stroke-width:2.1; }
+[data-era="20"] .mod .cap { background:linear-gradient(#eeeff3, #e4e6eb); }
+[data-era="20"] .accent .cap { background:linear-gradient(#3d9bff, #0a70ea); color:#fff; }
+[data-era="20"] .down .cap { transform:scale(.94); background:linear-gradient(#e6e7ec, #dedfe4); box-shadow:0 0 0 .08cqw rgba(0,0,0,.05), 0 .08cqw .25cqw rgba(0,0,0,.13); }
+[data-era="20"] .mod.down .cap { background:linear-gradient(#fff, #f8f8fa); }
+[data-era="20"] .accent.down .cap { background:linear-gradient(#1478e8, #0059c8); }
 
 /* Measured like the board, so a swatch's outlines and type match the keys above. */
 .designs { container-type:inline-size; width:min(640px, 100%); margin-inline:auto; display:flex; justify-content:center; flex-wrap:wrap; gap:16px 12px; }
@@ -168,7 +183,7 @@ footer nav { display:flex; gap:16px; flex-wrap:wrap; }
   .typed { height:68px; }
   .board-wrap { margin:32px auto 40px; }
   .key { height:15cqw; }
-  .cap b { font-size:6cqw; } .cap b.small { font-size:4cqw; } .cap svg { width:5.6cqw; height:5.6cqw; }
+  .cap { --fp:.38cqw; } .cap b { font-size:6cqw; } .cap b.small { font-size:4cqw; } .cap svg { width:5.6cqw; height:5.6cqw; }
   .designs { display:grid; grid-template-columns:repeat(6,1fr); gap:16px 4px; } .design { width:auto; } .swatch { width:13cqw; height:13cqw; } .swatch .cap b { font-size:4.4cqw; }
   .feat { grid-template-columns:1fr; gap:28px; }
   section.text { padding-top:72px; }
@@ -212,9 +227,9 @@ footer nav { display:flex; gap:16px; flex-wrap:wrap; }
     <div class="wide">
       <p class="feat-label">The joy of it</p>
       <ul class="feat">
-        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="5" height="8" rx="1"/><rect x="9.5" y="8" width="5" height="8" rx="1.5"/><rect x="16" y="8" width="5" height="8" rx="2.5"/></svg></span><b>Six eras of buttons</b><span>One-bit pixels, bevelled grey, glossy gel, soft gradients, flat and rounded. Swipe the keys to travel between them.</span></li>
+        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="5" height="8" rx="1"/><rect x="9.5" y="8" width="5" height="8" rx="1.5"/><rect x="16" y="8" width="5" height="8" rx="2.5"/></svg></span><b>Six eras of buttons</b><span>One-bit pixels, bevelled grey, glossy gel, raised and letterpressed, frosted and flat, plump and rounded. Swipe the keys to travel between them.</span></li>
         <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg></span><b>The sound of the real thing</b><span>Every era plays keystrokes recorded from a real keyboard of its time. Keys on the left sound left, and keys on the right sound right.</span></li>
-        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="6" width="16" height="12" rx="2"/><path d="M8 12h8"/></svg></span><b>Pressed the way they were</b><span>1984 buttons invert, 1997 bevels flip, and the 2002 return key breathes like a default button waiting for you.</span></li>
+        <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="6" width="16" height="12" rx="2"/><path d="M8 12h8"/></svg></span><b>Pressed the way they were</b><span>1984 buttons invert, 1997 bevels flip, the 2002 return key breathes like a default button waiting for you, and 2020 keys give a little squeeze.</span></li>
         <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3" width="8" height="18" rx="2"/><path d="M4 9v6"/><path d="M20 9v6"/></svg></span><b>Felt in your thumbs</b><span>A soft tap of haptics on each press, so typing stops feeling like tapping on glass.</span></li>
         <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5"/><path d="M12 12v9"/></svg></span><b>An unboxing, every time</b><span>Buying an era is half the fun. Cut the tape, peel the film, and hear it type its own name.</span></li>
         <li><span class="feat-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="11" rx="2.5"/><path d="M7 11h.01M11 11h.01M15 11h.01M8 14.5h8"/></svg></span><b>A time machine in your pocket</b><span>Press the buttons in the app, just to hear each year again.</span></li>
@@ -257,7 +272,7 @@ const ERAS = {
   '84': { name:'1984', sw:'Crisp', line:'Black and white, crisp and clacky' },
   '97': { name:'1997', sw:'Cushioned', line:'Grey, bevelled and softly cushioned' },
   '02': { name:'2002', sw:'Quiet', line:'Glossy, clear and quiet' },
-  '11': { name:'2011', sw:'Thin', line:'Soft gradients, slim and crisp' },
+  '11': { name:'2011', sw:'Thin', line:'Raised, glossy and crisp' },
   '14': { name:'2014', sw:'Slim', line:'Flat, light and tidy' },
   '20': { name:'2020', sw:'Firm', line:'Rounded, bright and firm' },
 };
@@ -301,6 +316,21 @@ const ICON = {
   ret:'<svg viewBox="0 0 24 24"><path d="M19 6v5a2 2 0 0 1-2 2H5M9 9l-4 4 4 4"/></svg>',
   face:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14.500c1 1.500 2.400 2.200 4 2.200s3-.7 4-2.200M9 9.500v.01M15 9.500v.01"/></svg>',
 };
+const PIXEL_FONT = {" ":[0,"...."],".":[8,"## ##"],",":[8,"## ## .# #."],"!":[0,"## ## ## ## ## ## ## .. ## ##"],"?":[0,".####. ##..## ....## ...##. ..##.. ..##.. ...... ...... ..##.. ..##.."],"-":[6,"#####"],"'":[0,"## ## #."],"’":[0,"## ## .# #."],"a":[3,".####. ....## .##### ##..## ##..## ##..## .#####"],"b":[0,"##.... ##.... ##.... #####. ##..## ##..## ##..## ##..## ##..## #####."],"c":[3,".####. ##..## ##.... ##.... ##.... ##..## .####."],"d":[0,"....## ....## ....## .##### ##..## ##..## ##..## ##..## ##..## .#####"],"e":[3,".####. ##..## ##..## ###### ##.... ##..## .####."],"f":[0,"..### .##.. .##.. ####. .##.. .##.. .##.. .##.. .##.. .##.."],"g":[3,".##### ##..## ##..## ##..## ##..## ##..## .##### ....## ##..## .####."],"h":[0,"##.... ##.... ##.... #####. ##..## ##..## ##..## ##..## ##..## ##..##"],"i":[0,".. ## .. ## ## ## ## ## ## ##"],"j":[0,".... ..## .... ..## ..## ..## ..## ..## ..## ..## ..## ..## ###."],"k":[0,"##.... ##.... ##.... ##..## ##.##. ####.. ####.. ##.##. ##..## ##..##"],"l":[0,"## ## ## ## ## ## ## ## ## ##"],"m":[3,"#########. ##..##..## ##..##..## ##..##..## ##..##..## ##..##..## ##..##..##"],"n":[3,"#####. ##..## ##..## ##..## ##..## ##..## ##..##"],"o":[3,".####. ##..## ##..## ##..## ##..## ##..## .####."],"p":[3,"#####. ##..## ##..## ##..## ##..## ##..## #####. ##.... ##.... ##...."],"q":[3,".##### ##..## ##..## ##..## ##..## ##..## .##### ....## ....## ....##"],"r":[3,"##.## ####. ##... ##... ##... ##... ##..."],"s":[3,".##### ##.... ##.... .####. ....## ....## #####."],"t":[1,".##.. .##.. ####. .##.. .##.. .##.. .##.. .##.. ..###"],"u":[3,"##..## ##..## ##..## ##..## ##..## ##..## .#####"],"v":[3,"##..## ##..## ##..## ##..## .####. .####. ..##.."],"w":[3,"##..##..## ##..##..## ##..##..## ##..##..## ##..##..## ##..##..## .########."],"x":[3,"##..## ##..## .####. ..##.. .####. ##..## ##..##"],"y":[3,"##..## ##..## ##..## ##..## ##..## ##..## .##### ....## ##..## .####."],"z":[3,"###### ....## ...##. ..##.. .##... ##.... ######"],"A":[0,"..##.. .####. ##..## ##..## ##..## ##..## ###### ##..## ##..## ##..##"],"B":[0,"#####. ##..## ##..## ##..## #####. ##..## ##..## ##..## ##..## #####."],"C":[0,".####. ##..## ##.... ##.... ##.... ##.... ##.... ##.... ##..## .####."],"D":[0,"####.. ##.##. ##..## ##..## ##..## ##..## ##..## ##..## ##.##. ####.."],"E":[0,"###### ##.... ##.... ##.... #####. ##.... ##.... ##.... ##.... ######"],"F":[0,"###### ##.... ##.... ##.... #####. ##.... ##.... ##.... ##.... ##...."],"G":[0,".####. ##..## ##.... ##.... ##.### ##..## ##..## ##..## ##..## .#####"],"H":[0,"##..## ##..## ##..## ##..## ###### ##..## ##..## ##..## ##..## ##..##"],"I":[0,"#### .##. .##. .##. .##. .##. .##. .##. .##. ####"],"J":[0,"....## ....## ....## ....## ....## ....## ....## ....## ##..## .####."],"K":[0,"##..## ##..## ##.##. ####.. ###... ####.. ##.##. ##..## ##..## ##..##"],"L":[0,"##.... ##.... ##.... ##.... ##.... ##.... ##.... ##.... ##.... ######"],"M":[0,"##....## ###..### ######## ##.##.## ##....## ##....## ##....## ##....## ##....## ##....##"],"N":[0,"##...## ###..## ###..## ####.## ##.#### ##..### ##..### ##...## ##...## ##...##"],"O":[0,".####. ##..## ##..## ##..## ##..## ##..## ##..## ##..## ##..## .####."],"P":[0,"#####. ##..## ##..## ##..## #####. ##.... ##.... ##.... ##.... ##...."],"Q":[0,".####. ##..## ##..## ##..## ##..## ##..## ##..## ##..## ##.##. .##.##"],"R":[0,"#####. ##..## ##..## ##..## #####. ##.##. ##..## ##..## ##..## ##..##"],"S":[0,".####. ##..## ##.... ##.... .####. ....## ....## ....## ##..## .####."],"T":[0,"###### ..##.. ..##.. ..##.. ..##.. ..##.. ..##.. ..##.. ..##.. ..##.."],"U":[0,"##..## ##..## ##..## ##..## ##..## ##..## ##..## ##..## ##..## .####."],"V":[0,"##..## ##..## ##..## ##..## ##..## ##..## ##..## .####. .####. ..##.."],"W":[0,"##....## ##....## ##....## ##....## ##....## ##....## ##.##.## ######## ###..### ##....##"],"X":[0,"##..## ##..## .####. .####. ..##.. ..##.. .####. .####. ##..## ##..##"],"Y":[0,"##..## ##..## ##..## .####. .####. ..##.. ..##.. ..##.. ..##.. ..##.."],"Z":[0,"###### ....## ....## ...##. ..##.. .##... ##.... ##.... ##.... ######"],"0":[0,".####. ##..## ##..## ##.### ##.### ###.## ###.## ##..## ##..## .####."],"1":[0,"..##.. .###.. ####.. ..##.. ..##.. ..##.. ..##.. ..##.. ..##.. ######"],"2":[0,".####. ##..## ....## ....## ...##. ..##.. .##... ##.... ##.... ######"],"3":[0,".####. ##..## ....## ....## ..###. ....## ....## ....## ##..## .####."],"4":[0,"##..## ##..## ##..## ##..## ##..## ###### ....## ....## ....## ....##"],"5":[0,"###### ##.... ##.... #####. ....## ....## ....## ....## ##..## .####."],"6":[0,"..###. .##... ##.... #####. ##..## ##..## ##..## ##..## ##..## .####."],"7":[0,"###### ....## ....## ...##. ...##. ..##.. ..##.. ..##.. ..##.. ..##.."],"8":[0,".####. ##..## ##..## ##..## .####. ##..## ##..## ##..## ##..## .####."],"9":[0,".####. ##..## ##..## ##..## ##..## .##### ....## ....## ...##. .###.."]};
+const esc = t => t.replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+// A text label: the plain text, plus the same text in the pixel font for 1984 when it has every character.
+function label(text) {
+  const glyphs = [...text].map(c => PIXEL_FONT[c]);
+  if (!text || glyphs.some(g => !g)) return `<span class="tx">${esc(text)}</span>`;
+  let x = 0, rects = '';
+  for (const [top, art] of glyphs) {
+    const rows = art.split(' ');
+    rows.forEach((line, y) => { [...line].forEach((m, c) => { if (m === '#') rects += `<rect x="${x + c}" y="${top + y}" width="1" height="1"/>`; }); });
+    x += rows[0].length + 1;
+  }
+  const w = x - 1;
+  return `<svg class="px" viewBox="0 0 ${w} 13" style="width:calc(${w} * var(--fp))" aria-hidden="true">${rects}</svg><span class="tx">${esc(text)}</span>`;
+}
 const LETTERS = ['qwertyuiop','asdfghjkl','zxcvbnm'], NUMBERS = ['1234567890','-/:;()$&@"','.,?!\''];
 const FACES = ['😀','😎','🥹','🤌','🔥','🫶','✨','🎹'];
 const $ = id => document.getElementById(id);
@@ -328,7 +358,7 @@ function build() {
       b.className = 'key'; b.type = 'button'; b.tabIndex = -1; b.style.setProperty('--w', k.w); b.dataset.id = k.id;
       b.setAttribute('aria-label', { ' ':'space', del:'delete', ret:'return', shift:'shift', face:'emoji', mode:'switch layout' }[k.id] || k.id);
       const small = k.id === 'mode' ? ' class="small"' : '';
-      b.innerHTML = `<span class="cap"><b${small}>${k.label}</b></span>`;
+      b.innerHTML = `<span class="cap"><b${small}>${k.label.startsWith('<svg') ? k.label : label(k.label)}</b></span>`;
       b.classList.add(k.kind);
       rowEl.append(b); if (k.id) keyEls.set(k.id, b);
     }
@@ -338,7 +368,7 @@ function build() {
 }
 function paintShift() {
   if (numbers) return;
-  for (const [id, el] of keyEls) if (id.length === 1 && id !== ' ') el.querySelector('b').textContent = shift ? id.toUpperCase() : id;
+  for (const [id, el] of keyEls) if (id.length === 1 && id !== ' ') el.querySelector('b').innerHTML = label(shift ? id.toUpperCase() : id);
   const s = keyEls.get('shift'); if (s) s.querySelector('b').innerHTML = shift ? ICON.caps : ICON.shift;
 }
 function show() {
@@ -419,7 +449,7 @@ function pick(id, animate = true) {
 for (const id of ORDER) {
   const b = document.createElement('button');
   b.className = 'design'; b.type = 'button'; b.dataset.id = id; b.dataset.era = id; b.setAttribute('aria-pressed', 'false'); b.setAttribute('aria-label', ERAS[id].name);
-  b.innerHTML = `<span class="swatch"><span class="cap"><b>\u2019${id}</b></span></span><small>${ERAS[id].name}</small>`;
+  b.innerHTML = `<span class="swatch"><span class="cap"><b>${label('\u2019' + id)}</b></span></span><small>${ERAS[id].name}</small>`;
   b.addEventListener('click', () => pick(id));
   designs.append(b);
 }
